@@ -1,0 +1,77 @@
+name: Run Terragrunt
+
+on:
+  workflow_dispatch:
+    inputs:
+      cloud:
+        description: 'Cloud provider (gcp, aws, azure)'
+        required: true
+      environment:
+        description: 'Environment (labs, poc, dev, prod)'
+        required: true
+      resource:
+        description: 'Resource folder name'
+        required: true
+      terraform_command:
+        description: 'Terraform command to run'
+        required: true
+      auto_approve:
+        description: 'Add --auto-approve flag (true or false)'
+        required: false
+        default: false
+
+    defaults:
+      run:
+        shell: bash
+  
+jobs:
+  terragrunt:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Terraform and Terragrunt
+      run: |
+        wget https://releases.hashicorp.com/terraform/1.0.2/terraform_1.0.2_linux_amd64.zip
+        unzip terraform_1.0.2_linux_amd64.zip
+        sudo mv terraform /usr/local/bin/
+        wget https://github.com/gruntwork-io/terragrunt/releases/download/v0.32.2/terragrunt_linux_amd64
+        sudo mv terragrunt_linux_amd64 /usr/local/bin/terragrunt
+        sudo chmod +x /usr/local/bin/terragrunt
+
+      
+    - name: Authenticate for AWS
+      if: ${{ github.event.inputs.cloud == 'aws' }}
+      env:
+        AWS_ACCESS_KEY_ID: ${{ (github.event.inputs.environment == 'prod') && secrets.AWS_ACCESS_KEY_PROD || (github.event.inputs.environment == 'dev') && secrets.AWS_ACCESS_KEY_DEV || secrets.AWS_ACCESS_KEY_LABS }}
+        AWS_SECRET_ACCESS_KEY: ${{ (github.event.inputs.environment == 'prod') && secrets.AWS_SECRET_ACCESS_KEY_PROD || (github.event.inputs.environment == 'dev') && secrets.AWS_SECRET_ACCESS_KEY_DEV || secrets.AWS_SECRET_ACCESS_KEY_LABS }}
+        AWS_DEFAULT_REGION: us-east-1
+      run: |
+        aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+        aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+        aws configure set default.region us-east-1
+
+    - name: Setup Git credentials
+      env:
+        ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+      run: |
+        git config --global url."https://${ACCESS_TOKEN}@github.com/".insteadOf "https://github.com/"
+  
+
+
+    - name: Run Terraform AWS
+      if: ${{ github.event.inputs.cloud == 'aws' }}
+      env:
+        CLOUD: ${{ github.event.inputs.cloud }}
+        ENVIRONMENT: ${{ github.event.inputs.environment }}
+        RESOURCE: ${{ github.event.inputs.resource }}
+        TERRAFORM_COMMAND: ${{ github.event.inputs.terraform_command }}
+        AUTO_APPROVE: ${{ github.event.inputs.auto_approve }}         
+      run: |
+        cd live/$CLOUD/$ENVIRONMENT/$RESOURCE
+        if [ "$TERRAFORM_COMMAND" == "apply" ]; then
+          terragrunt apply ${AUTO_APPROVE:+"--auto-approve"}
+        elif [ "$TERRAFORM_COMMAND" == "destroy" ]; then
+            terragrunt destroy ${AUTO_APPROVE:+"--auto-approve"}
+        else
+            terragrunt $TERRAFORM_COMMAND
+        fi 
