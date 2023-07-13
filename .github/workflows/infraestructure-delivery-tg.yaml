@@ -6,12 +6,15 @@ on:
       cloud:
         description: 'Cloud provider (gcp, aws, azure)'
         required: true
+        default: 'aws'
       environment:
         description: 'Environment (labs, poc, dev, prod)'
         required: true
+        default: 'sandbox'
       resource:
         description: 'Resource folder name'
         required: true
+        default: 'main'
       terragrunt_command:
         description: 'Terragrunt command to run'
         required: true
