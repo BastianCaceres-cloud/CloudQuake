@@ -1,13 +1,13 @@
 
 #ELASTIC CONTAINER REGISTRY
-# module "ecr" {
-#   source = "git::https://github.com/cloudbuilderspa/CloudInfrakit.git//aws/ecr?ref=feature/aws_ecr"
+module "ecr" {
+  source = "git::https://github.com/BastianCaceres-cloud/CloudInfraKit.git//aws/ecr?ref=main"
 
-#   ecr_repository_name       = "ecr-test"
-#   ecr_image_tag_mutability  = "MUTABLE"
-#   ecr_scan_on_push          = true
+  ecr_repository_name       = "ecr-test"
+  ecr_image_tag_mutability  = "MUTABLE"
+  ecr_scan_on_push          = true
 
-# }
+}
 
 
 
