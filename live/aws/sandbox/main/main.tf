@@ -1,70 +1,78 @@
 
 #ELASTIC CONTAINER REGISTRY
-module "ecr" {
+module "ecr_componente1" {
   source = "git::https://github.com/BastianCaceres-cloud/CloudInfraKit.git//aws/ecr?ref=main"
 
-  ecr_repository_name       = "ecr-test"
+  ecr_repository_name       = "ecr-componente1"
+  ecr_image_tag_mutability  = "MUTABLE"
+  ecr_scan_on_push          = true
+
+}
+
+module "ecr_componente2" {
+  source = "git::https://github.com/BastianCaceres-cloud/CloudInfraKit.git//aws/ecr?ref=main"
+
+  ecr_repository_name       = "ecr-componente2"
   ecr_image_tag_mutability  = "MUTABLE"
   ecr_scan_on_push          = true
 
 }
 
 
-
 # S3 BUCKET TERRAFORM STATE BACKEND
-# module "s3_tf_backend" {
-#   source = "git::https://github.com/cloudbuilderspa/CloudInfrakit.git//aws/s3/tf_backend?ref=main"
-#   bucket_name             = "infraestructure"
-#   versioning              = false #true
-#   force_destroy           = false
-#   server_side_encryption  = false #true
-# }
+module "s3_tf_backend" {
+  source = "git::https://github.com/BastianCaceres-cloud/CloudInfraKit.git//aws/s3_tf_backend?ref=main"
+  bucket_name             = "infraestructure"
+  versioning              = false #true
+  force_destroy           = false
+  server_side_encryption  = false #true
+}
 
 
 
 # S3 BUCKET STORAGE GATEWAY
-# module "s3_storage_gateway" {
-#   source = "git::https://github.com/cloudbuilderspa/CloudInfrakit.git//aws/s3/storage_gw?ref=main"
-#   bucket_name             = "storage-gateway-env-labs-657495"
-#   versioning              = false #true
-#   force_destroy           = false
-#   server_side_encryption  = false #true
-#   enable_lifecycle_rules  = false
-# }
+module "s3_storage_gateway" {
+  source = "git::https://github.com/BastianCaceres-cloud/CloudInfraKit.git//aws/s3_storagegw?ref=main"
+  bucket_name             = "storage-gateway-env-labs-657495"
+  versioning              = false #true
+  force_destroy           = false
+  server_side_encryption  = false #true
+  enable_lifecycle_rules  = false
+}
 
 
 
 ##NEW ROUTE53
-# module "route53" {
+module "route53" {
 
-#   source = "git::https://github.com/cloudbuilderspa/CloudInfrakit.git//aws/rt53?ref=feature/aws_route53"
+  source = "git::https://github.com/BastianCaceres-cloud/CloudInfraKit.git//aws/rt53?ref=main"
 
-#   create_zone = true
+  create_zone = true
 
-#   zone_name   = "cloudbuilder.cl"
+  zone_name   = "nttdata-sandbox.cl"
 
-#   records = {
-#     www = {
-#       name    = "www.cloudbuilder.cl"
-#       type    = "A"
-#       ttl     = 300
-#       records = ["192.0.2.1"]
-#     }
-#   }
+  records = {
+    www = {
+      name    = "www.nttdata-sandbox.cl"
+      type    = "A"
+      ttl     = 300
+      records = ["192.0.2.1"]
+    }
+  }
 
-#   tags = {
-#     terraform = "true"
-#     env = "labs"
+  tags = {
+    terraform = "true"
+    env = "labs"
 
-#   }
+  }
 
-# }
+}
 
 
 
 ##NEW ACM SSL REQUEST DNS VALIDATION
 # module "acm" {
-#   source = "git::https://github.com/cloudbuilderspa/CloudInfrakit.git//aws/acm?ref=feature/aws_acmssl"
+#   source = "git::https://github.com/BastianCaceres-cloud/CloudInfraKit.git//aws/acm?ref=main"
 
 #   domain_name = "cloudbuilder.cl"
 #   zone_id     = module.route53.zone_id
@@ -80,7 +88,7 @@ module "ecr" {
 
 ## CLOUDFRONT + S3 + OAI
 # module "cloudfront" {
-#   source = "git::https://github.com/cloudbuilderspa/CloudInfrakit.git//aws/cfront?ref=feature/aws_cfront"
+  # source = "git::https://github.com/BastianCaceres-cloud/CloudInfraKit.git//aws/ecr?ref=main"
 #   region                            = "us-east-1"
 #   bucket_name                       = "cloudfront-s3-oai-poc-ahpp-2023"
 #   bucket_acl                        = "private"
@@ -95,24 +103,24 @@ module "ecr" {
 
 
 # SIMPLE EMAIL SERVICES OUTPUT DNS RECORDS
-# module "ses" {
-#   source = "git::https://github.com/cloudbuilderspa/CloudInfrakit.git//aws/ses?ref=feature/aws_ses"
-#   domain = "cloudbuilder.cl"
-# }
+module "ses" {
+  source = "git::https://github.com/BastianCaceres-cloud/CloudInfraKit.git//aws/ecr?ref=main"
+  domain = "nttdata-sandbox.cl"
+}
 
-# output "domain_identity_arn" {
-#   value = module.ses.domain_identity_arn
-# }
+output "domain_identity_arn" {
+  value = module.ses.domain_identity_arn
+}
 
-# output "dkim_tokens" {
-#   value = module.ses.dkim_tokens
-# }
+output "dkim_tokens" {
+  value = module.ses.dkim_tokens
+}
 
 
 #LAMBDA FUNCTION WITH ECR IMAGE
 
 # module "lambda" {
-#   source = "git::https://github.com/cloudbuilderspa/CloudInfrakit.git//aws/lambda?ref=feature/aws_lambda"
+  # source = "git::https://github.com/BastianCaceres-cloud/CloudInfraKit.git//aws/lambda?ref=main"
 #   region = "us-east-1"
 #   lambda_function_name = "my-function"
 #   docker_image_uri = "public.ecr.aws/poc-hello-world/hello-service:latest"
@@ -127,14 +135,14 @@ module "ecr" {
 
 # MODULE SIMPLE QUEUE SERVICE
 
-# module "sqs" {
-#   source = "git::https://github.com/cloudbuilderspa/CloudInfrakit.git//aws/sqs?ref=feature/aws_sqs"
+module "sqs" {
+  source = "git::https://github.com/BastianCaceres-cloud/CloudInfraKit.git//aws/sqs?ref=main"
 
-#   region                     = "us-east-1"
-#   queue_name                 = "my-queue"
-#   delay_seconds              = 5
-#   max_message_size           = 256000
-#   message_retention_seconds  = 86400
-#   receive_wait_time_seconds  = 0
-#   visibility_timeout_seconds = 30
-# }
+  region                     = "us-east-1"
+  queue_name                 = "my-queue"
+  delay_seconds              = 5
+  max_message_size           = 256000
+  message_retention_seconds  = 86400
+  receive_wait_time_seconds  = 0
+  visibility_timeout_seconds = 30
+}
