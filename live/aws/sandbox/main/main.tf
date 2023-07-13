@@ -104,7 +104,7 @@ module "route53" {
 
 # SIMPLE EMAIL SERVICES OUTPUT DNS RECORDS
 module "ses" {
-  source = "git::https://github.com/BastianCaceres-cloud/CloudInfraKit.git//aws/ecr?ref=main"
+  source = "git::https://github.com/BastianCaceres-cloud/CloudInfraKit.git//aws/ses?ref=main"
   domain = "nttdata-sandbox.cl"
 }
 
