@@ -22,7 +22,7 @@ module "ecr_componente2" {
 # S3 BUCKET TERRAFORM STATE BACKEND
 module "s3_tf_backend" {
   source = "git::https://github.com/BastianCaceres-cloud/CloudInfraKit.git//aws/s3_tf_backend?ref=main"
-  bucket_name             = "infraestructure"
+  bucket_name             = "infraestructure-bastian-002307"
   versioning              = false #true
   force_destroy           = false
   server_side_encryption  = false #true
