@@ -2,7 +2,7 @@ module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "~> 19.0"
 
-  cluster_name    = "my-eks-cluster-ahpp_sandbox"
+  cluster_name    = "my-eks-cluster-ahpp_sandbox-2"
   cluster_version = "1.27"
 
   cluster_endpoint_public_access  = true
