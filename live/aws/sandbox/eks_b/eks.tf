@@ -94,7 +94,7 @@ module "eks" {
 
   aws_auth_roles = [
     {
-      rolearn  = "arn:aws:iam::aws:policy/aws-service-role/AmazonEKSServiceRolePolicy"
+      rolearn  = "arn:aws:iam::992927038462:role/aws-service-role/eks.amazonaws.com/AWSServiceRoleForAmazonEKS"
       username = "AmazonEKSServiceRolePolicy"
       groups   = ["system:masters"]
     },
