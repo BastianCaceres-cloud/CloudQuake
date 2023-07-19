@@ -19,6 +19,7 @@ module "eks" {
       most_recent = true
     }
   }
+  }
 
   vpc_id                   = "vpc-08f7e81839d73a339"
   subnet_ids               = ["subnet-0f6e556a524856e76", "subnet-0f99d30e3b8433d9f", "subnet-0c30c282004e2ecb0"]
