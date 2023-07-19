@@ -24,6 +24,11 @@ module "eks_fargate" {
       username = "bcaceres"
       groups   = ["system:masters"]
     },
+    {
+      userarn  = "arn:aws:iam::992927038462:user/pipelines"
+      username = "pipelines"
+      groups   = ["system:masters"]
+    }
   ]
 
   aws_auth_accounts = [
