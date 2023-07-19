@@ -26,8 +26,6 @@ module "eks" {
   control_plane_subnet_ids = ["subnet-0f6e556a524856e76", "subnet-0f99d30e3b8433d9f", "subnet-0c30c282004e2ecb0"]
 
 
-  create_cluster_security_group = false
-  create_node_security_group    = false
 
 
   # Self Managed Node Group(s)
