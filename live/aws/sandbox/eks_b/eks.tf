@@ -24,58 +24,58 @@ module "eks" {
   control_plane_subnet_ids = ["subnet-0f6e556a524856e76", "subnet-0f99d30e3b8433d9f", "subnet-0c30c282004e2ecb0"]
 
   # Self Managed Node Group(s)
-  self_managed_node_group_defaults = {
-    instance_type                          = "m6i.large"
-    update_launch_template_default_version = true
-    iam_role_additional_policies = {
-      AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
-    }
-  }
+  # self_managed_node_group_defaults = {
+  #   instance_type                          = "m6i.large"
+  #   update_launch_template_default_version = true
+  #   iam_role_additional_policies = {
+  #     AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+  #   }
+  # }
 
-  self_managed_node_groups = {
-    one = {
-      name         = "mixed-1"
-      max_size     = 5
-      desired_size = 2
+  # self_managed_node_groups = {
+  #   one = {
+  #     name         = "mixed-1"
+  #     max_size     = 5
+  #     desired_size = 2
 
-      use_mixed_instances_policy = true
-      mixed_instances_policy = {
-        instances_distribution = {
-          on_demand_base_capacity                  = 0
-          on_demand_percentage_above_base_capacity = 10
-          spot_allocation_strategy                 = "capacity-optimized"
-        }
+  #     use_mixed_instances_policy = true
+  #     mixed_instances_policy = {
+  #       instances_distribution = {
+  #         on_demand_base_capacity                  = 0
+  #         on_demand_percentage_above_base_capacity = 10
+  #         spot_allocation_strategy                 = "capacity-optimized"
+  #       }
 
-        override = [
-          {
-            instance_type     = "m5.large"
-            weighted_capacity = "1"
-          },
-          {
-            instance_type     = "m6i.large"
-            weighted_capacity = "2"
-          },
-        ]
-      }
-    }
-  }
+  #       override = [
+  #         {
+  #           instance_type     = "m5.large"
+  #           weighted_capacity = "1"
+  #         },
+  #         {
+  #           instance_type     = "m6i.large"
+  #           weighted_capacity = "2"
+  #         },
+  #       ]
+  #     }
+  #   }
+  # }
 
   # EKS Managed Node Group(s)
-  eks_managed_node_group_defaults = {
-    instance_types = ["m6i.large", "m5.large", "m5n.large", "m5zn.large"]
-  }
+  # eks_managed_node_group_defaults = {
+  #   instance_types = ["m6i.large", "m5.large", "m5n.large", "m5zn.large"]
+  # }
 
-  eks_managed_node_groups = {
-    blue = {}
-    green = {
-      min_size     = 1
-      max_size     = 10
-      desired_size = 1
+  # eks_managed_node_groups = {
+  #   blue = {}
+  #   green = {
+  #     min_size     = 1
+  #     max_size     = 10
+  #     desired_size = 1
 
-      instance_types = ["t3.large"]
-      capacity_type  = "SPOT"
-    }
-  }
+  #     instance_types = ["t3.large"]
+  #     capacity_type  = "SPOT"
+  #   }
+  # }
 
   # Fargate Profile(s)
   fargate_profiles = {
