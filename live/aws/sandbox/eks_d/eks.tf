@@ -4,13 +4,14 @@ module "eks" {
 
   cluster_name    = "my-eks-cluster-ahpp_sandbox-2"
   cluster_version = "1.27"
-
   cluster_endpoint_public_access  = true
 
   cluster_addons = {
     coredns = {
-      most_recent = true
-    }
+      configuration_values = jsonencode({
+        computeType = "Fargate"
+      })
+
     kube-proxy = {
       most_recent = true
     }
@@ -22,6 +23,11 @@ module "eks" {
   vpc_id                   = "vpc-08f7e81839d73a339"
   subnet_ids               = ["subnet-0f6e556a524856e76", "subnet-0f99d30e3b8433d9f", "subnet-0c30c282004e2ecb0"]
   control_plane_subnet_ids = ["subnet-0f6e556a524856e76", "subnet-0f99d30e3b8433d9f", "subnet-0c30c282004e2ecb0"]
+
+
+  create_cluster_security_group = false
+  create_node_security_group    = false
+
 
   # Self Managed Node Group(s)
   # self_managed_node_group_defaults = {
@@ -77,6 +83,12 @@ module "eks" {
   #   }
   # }
 
+  fargate_profile_defaults = {
+    iam_role_additional_policies = {
+      additional = aws_iam_policy.additional.arn
+    }
+  }
+
   # Fargate Profile(s)
   fargate_profiles = {
     default = {
@@ -84,9 +96,13 @@ module "eks" {
       selectors = [
         {
           namespace = "default"
+        },
+        {
+          namespace = "kube-system"
         }
       ]
-    }
+    },
+
   }
 
   # aws-auth configmap
