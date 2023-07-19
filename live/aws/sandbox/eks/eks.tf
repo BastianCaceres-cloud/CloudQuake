@@ -10,6 +10,11 @@ module "eks_fargate" {
       rolearn  = "arn:aws:iam::992927038462:role/my-eks-cluster_role"
       username = "my-eks-cluster-role"
       groups   = ["system:masters"]
+    },
+    {
+      rolearn  = "arn:aws:iam::992927038462:role/fargate_pod_execution_role"
+      username = "fargate_pod_execution_role"
+      groups   = ["system:masters"]
     }
   ]
 
