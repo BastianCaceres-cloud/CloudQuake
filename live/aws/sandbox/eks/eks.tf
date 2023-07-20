@@ -7,12 +7,12 @@ module "eks_fargate" {
   subnet_ids   = ["subnet-0f6e556a524856e76", "subnet-0f99d30e3b8433d9f", "subnet-0c30c282004e2ecb0"]
   aws_auth_roles = [
     {
-      rolearn  = "arn:aws:iam::992927038462:role/my-eks-cluster_role"
+      rolearn  = module.eks_fargate.cluster_role_arn
       username = "my-eks-cluster-role"
       groups   = ["system:masters"]
     },
     {
-      rolearn  = "arn:aws:iam::992927038462:role/fargate_pod_execution_role"
+      rolearn  = module.eks_fargate.fargate_pod_execution_role_arn
       username = "fargate_pod_execution_role"
       groups   = ["system:masters"]
     }
