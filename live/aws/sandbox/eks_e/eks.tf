@@ -111,7 +111,7 @@ module "eks" {
   aws_auth_roles = [
     {
       rolearn  = "arn:aws:iam::992927038462:role/eks-cluster-ahpp-sandbox_role"
-      username = "eksadmin"
+      username = "eks-cluster-ahpp-sandbox_role"
       groups   = ["system:masters"]
     },
 
