@@ -2,7 +2,7 @@ module "eks_iam_roles" {
   source = "git::https://github.com/BastianCaceres-cloud/CloudInfraKit.git//aws/iam/roles/eks?ref=main"
   
   region       = "us-east-1"
-  cluster_name = "my-eks-cluster-ahpp_sandbox-2"
+  cluster_name = "eks-cluster-ahpp-sandbox"
 }
 
 output "cluster_role_arn" {
