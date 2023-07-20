@@ -8,10 +8,8 @@ module "eks" {
 
   cluster_addons = {
     coredns = {
-      configuration_values = jsonencode({
-        computeType = "Fargate"
-      })
-
+      most_recent = true
+    }
     kube-proxy = {
       most_recent = true
     }
@@ -19,7 +17,7 @@ module "eks" {
       most_recent = true
     }
   }
-  }
+
 
   vpc_id                   = "vpc-037adc6ee9cb9654b"
   subnet_ids               = ["subnet-094726eea389c7f3a", "subnet-052e519657f5ae177", "subnet-02ab93862b4cedb2c"]
