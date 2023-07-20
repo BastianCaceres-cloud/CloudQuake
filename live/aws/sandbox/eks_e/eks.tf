@@ -7,8 +7,15 @@ module "eks" {
   cluster_endpoint_public_access  = true
 
   cluster_addons = {
+    
     coredns = {
+      
       most_recent = true
+      configuration_values = jsonencode({
+        computeType = "Fargate"
+      })
+
+
     }
     kube-proxy = {
       most_recent = true
