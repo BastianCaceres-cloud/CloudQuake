@@ -108,9 +108,6 @@ module "eks" {
         },
         {
           namespace = "bamboo"
-        },
-        {
-          namespace = "vault"
         }
       ]
     },
