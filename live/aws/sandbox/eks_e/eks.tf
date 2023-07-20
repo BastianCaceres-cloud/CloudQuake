@@ -79,7 +79,7 @@ module "eks" {
     blue = {}
     green = {
       min_size     = 2
-      max_size     = 3
+      max_size     = 4
       desired_size = 2
 
       instance_types = ["t3.large"]
