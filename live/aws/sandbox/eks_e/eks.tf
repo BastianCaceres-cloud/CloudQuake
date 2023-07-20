@@ -111,7 +111,7 @@ module "eks" {
       rolearn  = "arn:aws:iam::992927038462:role/my-eks-cluster-ahpp_sandbox-2_fargate_pod_execution_role"
       username = "eksadmin"
       groups   = ["system:masters"]
-    }
+    },
   ]
 
   aws_auth_users = [
