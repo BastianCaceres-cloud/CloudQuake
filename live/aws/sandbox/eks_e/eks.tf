@@ -2,7 +2,7 @@ module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "~> 19.0"
 
-  cluster_name    = "my-eks-cluster-ahpp_sandbox-3"
+  cluster_name    = "eks-cluster-ahpp-sandbox"
   cluster_version = "1.27"
   cluster_endpoint_public_access  = true
 
@@ -21,7 +21,7 @@ module "eks" {
   }
   }
 
-  vpc_id                   = "vpc-08f7e81839d73a339"
+  vpc_id                   = "vpc-037adc6ee9cb9654b"
   subnet_ids               = ["subnet-094726eea389c7f3a", "subnet-052e519657f5ae177", "subnet-02ab93862b4cedb2c"]
   control_plane_subnet_ids = ["subnet-094726eea389c7f3a", "subnet-052e519657f5ae177", "subnet-02ab93862b4cedb2c"]
 
