@@ -71,21 +71,21 @@ module "eks" {
   # }
 
 #  EKS Managed Node Group(s)
-  eks_managed_node_group_defaults = {
-    instance_types = ["m6i.large", "m5.large", "m5n.large", "m5zn.large"]
-  }
+  # eks_managed_node_group_defaults = {
+  #   instance_types = ["m6i.large", "m5.large", "m5n.large", "m5zn.large"]
+  # }
 
-  eks_managed_node_groups = {
-    blue = {}
-    green = {
-      min_size     = 1
-      max_size     = 3
-      desired_size = 2
+  # eks_managed_node_groups = {
+  #   blue = {}
+  #   green = {
+  #     min_size     = 1
+  #     max_size     = 3
+  #     desired_size = 2
 
-      instance_types = ["t3.large"]
-      capacity_type  = "SPOT"
-    }
-  }
+  #     instance_types = ["t3.large"]
+  #     capacity_type  = "SPOT"
+  #   }
+  # }
 
 
 
@@ -99,6 +99,18 @@ module "eks" {
         },
         {
           namespace = "kube-system"
+        },
+        {
+          namespace = "jfrog"
+        },
+        {
+          namespace = "bitbucket"
+        },
+        {
+          namespace = "bamboo"
+        },
+        {
+          namespace = "vault"
         }
       ]
     },
