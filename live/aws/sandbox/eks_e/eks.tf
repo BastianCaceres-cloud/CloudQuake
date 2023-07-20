@@ -95,7 +95,7 @@ module "eks" {
       name = "default"
       selectors = [
         {
-          namespace = "default"
+          namespace = "vault"
         },
         {
           namespace = "kube-system"
