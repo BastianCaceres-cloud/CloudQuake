@@ -1,8 +1,8 @@
 module "efs" {
   source                     = "git::https://github.com/BastianCaceres-cloud/CloudInfraKit.git//aws/efs?ref=main"
   region                     = "us-east-1"
-  vpc_id                     = "vpc-08f7e81839d73a339"
-  subnet_ids                 = ["subnet-0f6e556a524856e76", "subnet-0f99d30e3b8433d9f", "subnet-0c30c282004e2ecb0"]
+  vpc_id                     = "vpc-037adc6ee9cb9654b"
+  subnet_ids                 = ["subnet-094726eea389c7f3a", "subnet-052e519657f5ae177", "subnet-02ab93862b4cedb2c"]
   cidr_block                 = "10.0.0.0/16"
   creation_token             = "vault-on-fargate"
   volume_name                = "VaultVolume"
