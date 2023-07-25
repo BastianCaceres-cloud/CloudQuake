@@ -1,6 +1,6 @@
 
 module "lambda" {
-  source = "git::https://github.com/cloudbuilderspa/CloudInfrakit.git//aws/lambda?ref=feature/aws_lambda"
+  source = "git::https://github.com/BastianCaceres-cloud/CloudInfraKit.git//aws/lambda?ref=main"
   
   lambda_function_name = "my-function-example-fromt-ecr-ahpp"
   docker_image_uri = "992927038462.dkr.ecr.us-east-1.amazonaws.com/example-img-lambda-ahpp:latest"
