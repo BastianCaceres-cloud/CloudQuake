@@ -1,4 +1,4 @@
-module "ecr_lambda_example" {
+module "ecr" {
   source                     = "git::https://github.com/BastianCaceres-cloud/CloudInfraKit.git//aws/ecr?ref=main"
   ecr_repository_name       = "example-img-lambda-ahpp"
   ecr_image_tag_mutability  = "MUTABLE"
