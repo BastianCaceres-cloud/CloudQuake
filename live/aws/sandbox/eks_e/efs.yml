@@ -1,0 +1,42 @@
+# ---
+# apiVersion: storage.k8s.io/v1beta1
+# kind: CSIDriver
+# metadata:
+#   name: efs.csi.aws.com
+# spec:
+#   attachRequired: false
+# ---
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: efs-sc
+provisioner: efs.csi.aws.com
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: vault-efs-pv
+spec:
+  capacity:
+    storage: 100Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: efs-sc
+  csi:
+    driver: efs.csi.aws.com
+    volumeHandle: fs-09f65fe81316d211e::fsap-073cd0d2be9f8b44a  # Reemplaza efs_id y efs_ap_id con los valores de salida de tu módulo de Terraform
+---
+# apiVersion: v1
+# kind: PersistentVolumeClaim
+# metadata:
+#   name: vault-efs-pvc
+
+# spec:
+#   accessModes:
+#     - ReadWriteMany
+#   storageClassName: efs-sc
+#   resources:
+#     requests:
+#       storage: 25Gi   
