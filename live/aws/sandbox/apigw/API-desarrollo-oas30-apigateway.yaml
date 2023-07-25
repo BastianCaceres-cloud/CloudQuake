@@ -4,7 +4,7 @@ info:
   description: "See https://jsonplaceholder.typicode.com/"
   version: "1.0.0"
 servers:
-- url: "https://6noq6zywhcaase5jcw44guqoea0sdncn.lambda-url.us-east-1.on.aws/{basePath}"
+- url: "https://6noq6zywhcaase5jcw44guqoea0sdncn.lambda-url.us-east-1.on.aws/"
   variables:
     basePath:
       default: "desarrollo"
