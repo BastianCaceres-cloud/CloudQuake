@@ -4,7 +4,7 @@ module "opensearch_clusteradmin" {
   region        = "us-east-1"
   domain_name   = "nttdatasandbox-os-domain"
   engine_version = "OpenSearch_1.0"
-  instance_type = "m5.large.search"
+  instance_type = "m5.large.elasticsearch"
   instance_count = 1
   ebs_enabled   = true
   volume_size   = 10
