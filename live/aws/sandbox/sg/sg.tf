@@ -81,12 +81,11 @@ module "security_groups_elasticache" {
 ### SECURITY GROUP RDS
 
 
-
-module "security_groups_rds" {
+module "security_groups_elasticache" {
   source = "git::https://github.com/BastianCaceres-cloud/CloudInfraKit.git//aws/sg?ref=main"
   vpc_id = "vpc-037adc6ee9cb9654b"
   security_groups = {
-    "sg-rds" = 
+    "sg-rds" = {
       name        = "sg-rds"
       description = "Security Group for rds"
       vpc_id      = "vpc-037adc6ee9cb9654b"
@@ -113,6 +112,6 @@ module "security_groups_rds" {
         security_groups = [] # Agregar esta propiedad
       },
       ]
-    
+    }
   }
 }
