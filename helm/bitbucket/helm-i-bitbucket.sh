@@ -1,0 +1,1 @@
+helm install bitbucket -f values.yaml . -n bitbucket

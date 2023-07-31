@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bitbucket-runner
+  namespace: bitbucket
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bitbucket-runner
+  template:
+    metadata:
+      labels:
+        app: bitbucket-runner
+    spec:
+      containers:
+      - name: bitbucket-runner
+        image: docker-public.packages.atlassian.com/sox/atlassian/bitbucket-pipelines-runner:1
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp
+        - name: docker-sock
+          mountPath: /var/run/docker.sock
+        - name: docker-containers
+          mountPath: /var/lib/docker/containers
+        env:
+        - name: ACCOUNT_UUID
+          value: "{b209f971-1c44-4631-a416-431cba8694ef}"
+        - name: RUNNER_UUID
+          value: "{dd76bf83-ce8d-5bbe-b37f-51be1bc0630e}"
+        - name: RUNTIME_PREREQUISITES_ENABLED
+          value: "true"
+        - name: OAUTH_CLIENT_ID
+          value: "S8OFW8JG1qOrIO1TeI8bHYkTXXz4vGcF"
+        - name: OAUTH_CLIENT_SECRET
+          value: "ATOAqsdIvEnLhrGGhmdmbvnUsMTQhnR9V2ifafgokjMTXv7Micc9YUwESBSjJnt1i-GLB69C5895"
+        - name: WORKING_DIRECTORY
+          value: "/tmp"
+      volumes:
+      - name: tmp
+        emptyDir: {}
+      - name: docker-sock
+        hostPath:
+          path: /var/run/docker.sock
+      - name: docker-containers
+        hostPath:
+          path: /var/lib/docker/containers
