@@ -10,5 +10,5 @@ module "cognito_opensearch" {
   iam_role_name         = "mi-rol-iam-opensearch"
   iam_role_policy_name  = "mi-politica-iam-opensearch"
   existing_domain_arn     = "arn:aws:es:us-east-1:992927038462:domain/nttdatasandbox-os-domain"
-  user_pool_domain_name = "mi-dominio-pool-usuarios-opensearch"
+  user_pool_domain_name = "mi-dominio-pool-usuarios-opensearch-1"
 }
