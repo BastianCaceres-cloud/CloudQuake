@@ -5,7 +5,7 @@ module "db" {
 
   engine            = "mysql"
   engine_version    = "5.7"
-  instance_class    = "db.t3a.large"
+  instance_class    = "db.m5.large"
   allocated_storage = 5
 
   db_name  = "demodb"
@@ -14,7 +14,7 @@ module "db" {
 
   iam_database_authentication_enabled = true
 
-  vpc_security_group_ids = ["sg-12345678"]
+  vpc_security_group_ids = ["sg-071515f0eb71c8f0d"]
 
   maintenance_window = "Mon:00:00-Mon:03:00"
   backup_window      = "03:00-06:00"
