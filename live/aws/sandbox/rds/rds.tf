@@ -1,15 +1,14 @@
 module "db" {
   source = "terraform-aws-modules/rds/aws"
 
-  identifier = "demodb"
+  identifier = "bitbucketdb"
 
   engine            = "postgres"
   engine_version    = "14"
   instance_class    = "db.m5.large"
-  allocated_storage = 5
-
-  db_name  = "demodb"
-  username = "user"
+  allocated_storage = 30
+  db_name  = "bitbucket"
+  username = "bitbucket"
   port     = "3306"
 
   iam_database_authentication_enabled = true
@@ -41,33 +40,33 @@ module "db" {
   major_engine_version = "14"
 
   # Database Deletion Protection
-  deletion_protection = true
+  deletion_protection = false
 
   parameters = [
     {
-      name  = "character_set_client"
-      value = "utf8mb4"
+      name  = "autovacuum"
+      value = "1"
     },
     {
-      name  = "character_set_server"
-      value = "utf8mb4"
+      name  = "client_encoding"
+      value = "utf8"
     }
   ]
 
-  options = [
-    {
-      option_name = "MARIADB_AUDIT_PLUGIN"
+  # options = [
+  #   {
+  #     option_name = "MARIADB_AUDIT_PLUGIN"
 
-      option_settings = [
-        {
-          name  = "SERVER_AUDIT_EVENTS"
-          value = "CONNECT"
-        },
-        {
-          name  = "SERVER_AUDIT_FILE_ROTATIONS"
-          value = "37"
-        },
-      ]
-    },
-  ]
+  #     option_settings = [
+  #       {
+  #         name  = "SERVER_AUDIT_EVENTS"
+  #         value = "CONNECT"
+  #       },
+  #       {
+  #         name  = "SERVER_AUDIT_FILE_ROTATIONS"
+  #         value = "37"
+  #       },
+  #     ]
+  #   },
+  # ]
 }
