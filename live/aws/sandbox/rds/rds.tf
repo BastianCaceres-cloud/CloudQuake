@@ -97,7 +97,7 @@ module "db_bamboo" {
   # Enhanced Monitoring - see example for details on how to create the role
   # by yourself, in case you don't want to create it automatically
   monitoring_interval    = "30"
-  monitoring_role_name   = "MyRDSMonitoringRole"
+  monitoring_role_name   = "MyRDSMonitoringRoleBambooBD"
   create_monitoring_role = true
 
   tags = {

@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bamboo-agent
+  namespace: bamboo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bamboo-agent
+  template:
+    metadata:
+      labels:
+        app: bamboo-agent
+    spec:
+      containers:
+      - name: bamboo-agent
+        image: asure/bamboo_remote_agent
+        ports:
+        - containerPort: 8085

@@ -132,7 +132,7 @@ module "security_groups_rds_bnamboo" {
       {
         description     = "Allow Access to rds bamboo"
         from_port       = 0
-        to_port         = 3306
+        to_port         = 5432
         protocol        = "tcp"
         cidr_blocks     = ["10.0.0.0/16","172.20.0.0/16"]
         security_groups = [] # Agregar esta propiedad

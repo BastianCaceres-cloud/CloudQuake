@@ -1,0 +1,1 @@
+helm upgrade bamboo -f values.yaml . -n bamboo
