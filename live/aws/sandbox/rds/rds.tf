@@ -89,7 +89,7 @@ module "db_bamboo" {
 
   iam_database_authentication_enabled = true
 
-  vpc_security_group_ids = ["sg-071515f0eb71c8f0d"]
+  vpc_security_group_ids = ["sg-0e11dc4654e348d36"]
 
   maintenance_window = "Mon:00:00-Mon:03:00"
   backup_window      = "03:00-06:00"
