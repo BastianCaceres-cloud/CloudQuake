@@ -3,8 +3,8 @@ module "db" {
 
   identifier = "demodb"
 
-  engine            = "mysql"
-  engine_version    = "5.7"
+  engine            = "postgres"
+  engine_version    = "14"
   instance_class    = "db.m5.large"
   allocated_storage = 5
 
@@ -35,10 +35,10 @@ module "db" {
   subnet_ids             = ["subnet-094726eea389c7f3a", "subnet-052e519657f5ae177", "subnet-02ab93862b4cedb2c"]
 
   # DB parameter group
-  family = "mysql5.7"
+  family = "postgres14"
 
   # DB option group
-  major_engine_version = "5.7"
+  major_engine_version = "14"
 
   # Database Deletion Protection
   deletion_protection = true
