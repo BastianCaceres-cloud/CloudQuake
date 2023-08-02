@@ -1,6 +1,6 @@
 #DYNAMODB FOR HASHICORP VAULT STORAGE BACKEND DYNAMODB WITH EKS FARGATE
 module "vault_dynamodb_backend" {
-  source = "git::https://github.com/BastianCaceres-cloud/CloudInfraKit.git//aws/cognito?ref=main"
+  source = "git::https://github.com/BastianCaceres-cloud/CloudInfraKit.git//aws/dynamodb?ref=main"
 
   table_name        = "vault-data"
   
