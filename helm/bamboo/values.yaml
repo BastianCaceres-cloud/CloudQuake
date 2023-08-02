@@ -91,7 +91,7 @@ serviceAccount:
 # database to use and its connection details.
 # https://atlassian.github.io/data-center-helm-charts/userguide/CONFIGURATION/#database-connectivity
 #
-database:
+database: 
 
   # -- The database type that should be used. If not specified, then it will need to be
   # provided via the browser during manual configuration post deployment. Valid values
@@ -102,7 +102,7 @@ database:
    # - 'mssql'
   # https://atlassian.github.io/data-center-helm-charts/userguide/CONFIGURATION/#databasetype
   #
-  type:
+  type: postgresql
 
   # -- The jdbc URL of the database. If not specified, then it will need to be provided
   # via the browser during manual configuration post deployment. Example URLs include:
@@ -112,7 +112,7 @@ database:
    # - 'jdbc:oracle:thin:@<dbhost>:1521:<SID>'
   # https://atlassian.github.io/data-center-helm-charts/userguide/CONFIGURATION/#databaseurl
   #
-  url:
+  url: jdbc:postgresql://bamboodb.cyixla73xfrd.us-east-1.rds.amazonaws.com:5432/bamboo
 
   # JDBC connection credentials
   #
@@ -128,7 +128,7 @@ database:
     # --from-literal=password=<password>'
     # https://kubernetes.io/docs/concepts/configuration/secret/#opaque-secrets
     #
-    secretName:
+    secretName: bamboo-db-secret
 
     # -- The key ('username') in the Secret used to store the database login username
     #
