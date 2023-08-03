@@ -166,7 +166,7 @@ module "security_groups_ec2_jfrog" {
       description = "Security Group for ec2-jfrog"
       vpc_id      = "vpc-037adc6ee9cb9654b"
       tags = {
-        Name = "rds-sg"
+        Name = "jfrog-sg"
       }
       ingress = [        
       {
@@ -174,7 +174,7 @@ module "security_groups_ec2_jfrog" {
         from_port       = 0
         to_port         = 0
         protocol        = "tcp"
-        cidr_blocks     = ["10.0.0.0/16","172.20.0.0/16"]
+        cidr_blocks     = ["10.0.0.0/16","172.20.0.0/16","0.0.0.0/0"]
         security_groups = [] # Agregar esta propiedad
       },
       ]
@@ -184,7 +184,7 @@ module "security_groups_ec2_jfrog" {
         from_port       = 0
         to_port         = 0
         protocol        = "tcp"
-        cidr_blocks     = ["10.0.0.0/16","172.20.0.0/16"]
+        cidr_blocks     = ["10.0.0.0/16","172.20.0.0/16","0.0.0.0/0"]
         security_groups = [] # Agregar esta propiedad
       },
       ]
