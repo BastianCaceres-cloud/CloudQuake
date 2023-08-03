@@ -191,3 +191,40 @@ module "security_groups_ec2_jfrog" {
     }
   }
 }
+
+
+
+module "security_groups_rds_jfrog" {
+  source = "git::https://github.com/BastianCaceres-cloud/CloudInfraKit.git//aws/sg?ref=main"
+  vpc_id = "vpc-037adc6ee9cb9654b"
+  security_groups = {
+    "sg-rds-jfrog" = {
+      name        = "sg-rds_jfrog"
+      description = "Security Group for rds jfrog"
+      vpc_id      = "vpc-037adc6ee9cb9654b"
+      tags = {
+        Name = "rds-sg"
+      }
+      ingress = [        
+      {
+        description     = "Allow Access to rds jfrog"
+        from_port       = 0
+        to_port         = 5432
+        protocol        = "tcp"
+        cidr_blocks     = ["10.0.0.0/16","172.20.0.0/16"]
+        security_groups = [] # Agregar esta propiedad
+      },
+      ]
+      egress = [
+      {
+        description     = "Allow Outbound to rds jfrog"
+        from_port       = 0
+        to_port         = 0
+        protocol        = "tcp"
+        cidr_blocks     = ["10.0.0.0/16","172.20.0.0/16"]
+        security_groups = [] # Agregar esta propiedad
+      },
+      ]
+    }
+  }
+}

@@ -10,7 +10,7 @@ module "vault_dynamodb_backend" {
   partition_key_name = "Path"
   partition_key_type = "S"
 
-  sort_key_name     = "Key"
+  sort_key_name     = "Key" 
   sort_key_type     = "S"
   
   tags              = {
