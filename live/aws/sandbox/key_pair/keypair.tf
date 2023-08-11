@@ -6,7 +6,7 @@ module "key_pair" {
 }
 
 
-module "key_pair" {
+module "key_pair_ec2_agent_bamboo" {
   source = "terraform-aws-modules/key-pair/aws"
 
   key_name           = "key-pair-ec2-bamboo-agent"
