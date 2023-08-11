@@ -250,7 +250,7 @@ module "security_groups_ec2_agent_bamboo" {
         from_port       = 0
         to_port         = 0
         protocol        = "tcp"
-        cidr_blocks     = ["10.0.0.0/16","172.20.0.0/16", "0.0.0.0/0"]
+        cidr_blocks     = ["10.0.0.0/16","172.20.0.0/16"]
         security_groups = [] # Agregar esta propiedad
       },
       ]
@@ -259,6 +259,46 @@ module "security_groups_ec2_agent_bamboo" {
         description     = "Allow Outbound to ec2-agent-bamboo"
         from_port       = 0
         to_port         = 0
+        protocol        = "tcp"
+        cidr_blocks     = ["10.0.0.0/16","172.20.0.0/16"]
+        security_groups = [] # Agregar esta propiedad
+      },
+      ]
+    }
+  }
+}
+
+
+
+
+
+
+module "security_groups_ec2_bastion" {
+  source = "git::https://github.com/BastianCaceres-cloud/CloudInfraKit.git//aws/sg?ref=main"
+  vpc_id = "vpc-037adc6ee9cb9654b"
+  security_groups = {
+    "sg-ec2-bastion" = {
+      name        = "sg-ec2-bastion"
+      description = "Security Group for ec2-bastion"
+      vpc_id      = "vpc-037adc6ee9cb9654b"
+      tags = {
+        Name = "ec2-bastion"
+      }
+      ingress = [        
+      {
+        description     = "Allow Access to ec2-bastion from internet"
+        from_port       = 22
+        to_port         = 22
+        protocol        = "tcp"
+        cidr_blocks     = ["10.0.0.0/16","172.20.0.0/16", "0.0.0.0/0"]
+        security_groups = [] # Agregar esta propiedad
+      },
+      ]
+      egress = [
+      {
+        description     = "Allow Outbound to ec2-bastion"
+        from_port       = 22
+        to_port         = 22
         protocol        = "tcp"
         cidr_blocks     = ["10.0.0.0/16","172.20.0.0/16", "0.0.0.0/0"]
         security_groups = [] # Agregar esta propiedad
