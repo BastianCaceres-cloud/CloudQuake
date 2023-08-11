@@ -250,7 +250,7 @@ module "security_groups_ec2_agent_bamboo" {
         from_port       = 0
         to_port         = 0
         protocol        = "tcp"
-        cidr_blocks     = ["10.0.0.0/16","172.20.0.0/16"]
+        cidr_blocks     = ["10.0.0.0/16","172.20.0.0/16", "0.0.0.0/0"]
         security_groups = [] # Agregar esta propiedad
       },
       ]
@@ -260,7 +260,7 @@ module "security_groups_ec2_agent_bamboo" {
         from_port       = 0
         to_port         = 0
         protocol        = "tcp"
-        cidr_blocks     = ["10.0.0.0/16","172.20.0.0/16"]
+        cidr_blocks     = ["10.0.0.0/16","172.20.0.0/16", "0.0.0.0/0"]
         security_groups = [] # Agregar esta propiedad
       },
       ]
