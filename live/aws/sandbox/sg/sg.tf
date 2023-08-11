@@ -228,3 +228,42 @@ module "security_groups_rds_jfrog" {
     }
   }
 }
+
+
+
+
+
+module "security_groups_ec2_agent_bamboo" {
+  source = "git::https://github.com/BastianCaceres-cloud/CloudInfraKit.git//aws/sg?ref=main"
+  vpc_id = "vpc-037adc6ee9cb9654b"
+  security_groups = {
+    "sg-ec2-agent-bamboo" = {
+      name        = "sg-ec2-agent-bamboo"
+      description = "Security Group for ec2-agent-bamboo"
+      vpc_id      = "vpc-037adc6ee9cb9654b"
+      tags = {
+        Name = "ec2-agent-bamboo"
+      }
+      ingress = [        
+      {
+        description     = "Allow Access to ec2-agent-bamboo from vpc and eks cidr"
+        from_port       = 0
+        to_port         = 0
+        protocol        = "tcp"
+        cidr_blocks     = ["10.0.0.0/16","172.20.0.0/16"]
+        security_groups = [] # Agregar esta propiedad
+      },
+      ]
+      egress = [
+      {
+        description     = "Allow Outbound to ec2-agent-bamboo"
+        from_port       = 0
+        to_port         = 0
+        protocol        = "tcp"
+        cidr_blocks     = ["10.0.0.0/16","172.20.0.0/16"]
+        security_groups = [] # Agregar esta propiedad
+      },
+      ]
+    }
+  }
+}
