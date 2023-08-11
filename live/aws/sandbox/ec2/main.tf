@@ -4,7 +4,7 @@ module "ec2_instance" {
   name = "bamboo-agent"
 
   instance_type          = "m2.2xlarge"
-  key_name               = "key-pair-ec2-bamboo-agent"
+  key_name               = "key-pair-ec2-bamboo-agent-2"
   monitoring             = true
   vpc_security_group_ids = ["sg-0142e9d7c1121ebfb"]
   subnet_id              = "subnet-052e519657f5ae177"
