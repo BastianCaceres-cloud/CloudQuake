@@ -20,7 +20,7 @@ module "ec2_instance" {
 module "ec2_instance_bastion" {
   source  = "terraform-aws-modules/ec2-instance/aws"
 
-  name = "bamboo-agent"
+  name = "bastion"
 
   instance_type          = "m2.2xlarge"
   key_name               = "key-pair-ec2-bamboo-agent-2"
