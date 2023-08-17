@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: arquetype-back-deployment
+  namespace: bamboo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: arquetype-back
+  template:
+    metadata:
+      labels:
+        app: arquetype-back
+    spec:
+      containers:
+      - name: arquetype-back
+        image: 992927038462.dkr.ecr.us-east-1.amazonaws.com/arquetype-back:latest
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: arquetype-back-service
+  namespace: bamboo
+spec:
+  selector:
+    app: arquetype-back
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: arquetype-back-ingress
+  namespace: bamboo
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/subnets: subnet-06ad01a8f2a40760a,subnet-0a8195b3ebc2d6984,subnet-013d49cd18467455d
+spec:
+  rules:
+  - http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: arquetype-back-service
+            port:
+              number: 80

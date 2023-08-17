@@ -1,0 +1,55 @@
+---
+Parameters:
+  EcrRepositoryName1:
+    Description: "El nombre del repositorio de ECR"
+    Type: String
+
+  EcrRepositoryName2:
+    Description: "El nombre del repositorio de ECR"
+    Type: String
+
+  EcrImageTagMutability:
+    Description: "La mutabilidad de las etiquetas de la imagen"
+    Type: String
+    Default: "MUTABLE"
+    AllowedValues:
+      - "MUTABLE"
+      - "IMMUTABLE"
+
+  EcrScanOnPush:
+    Description: "Habilitar o deshabilitar el escaneo de la imagen al hacer push"
+    Type: String
+    Default: "true"
+    AllowedValues:
+      - "true"
+      - "false"
+
+Resources:
+  EcrRepository1:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: !Ref EcrRepositoryName1
+      ImageTagMutability: !Ref EcrImageTagMutability
+      ImageScanningConfiguration:
+        scanOnPush: !If [EcrScanOnPushCondition, "true", "false"]
+
+  EcrRepository2:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: !Ref EcrRepositoryName2
+      ImageTagMutability: !Ref EcrImageTagMutability
+      ImageScanningConfiguration:
+        scanOnPush: !If [EcrScanOnPushCondition, "true", "false"]
+
+Conditions:
+  EcrScanOnPushCondition: !Equals [!Ref EcrScanOnPush, "true"]
+
+
+Outputs:
+  EcrRepositoryUrl1:
+    Description: "El URL del repositorio de ECR"
+    Value: !Sub "https://${AWS::Region}.amazonaws.com/${EcrRepository1}"
+
+  EcrRepositoryUrl2:
+    Description: "El URL del repositorio de ECR"
+    Value: !Sub "https://${AWS::Region}.amazonaws.com/${EcrRepository2}"
