@@ -141,6 +141,11 @@ module "eks" {
       userarn  = "arn:aws:iam::992927038462:user/pipelines"
       username = "pipelines"
       groups   = ["system:masters"]
+    },
+    {
+      userarn  = "arn:aws:iam::992927038462:user/gnavarrete"
+      username = "pipelines"
+      groups   = ["system:masters"]
     }
   ]
 
