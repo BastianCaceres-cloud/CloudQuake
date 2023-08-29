@@ -1,0 +1,69 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Creación de un Cluster de MSK (Managed Streaming for Kafka) en AWS
+
+Parameters:
+  Region:
+    Description: La región donde se ejecutarán las operaciones de AWS
+    Type: String
+    Default: 'us-east-1'
+
+  ClusterName:
+    Description: Nombre del cluster de MSK
+    Type: String
+
+  KafkaVersion:
+    Description: La versión deseada del software Kafka
+    Type: String
+
+
+  NumberOfBrokerNodes:
+    Description: El número deseado de nodos broker en el cluster de kafka
+    Type: Number
+
+
+  InstanceType:
+    Description: El tipo de instancia para usar en los brokers de Kafka
+    Type: String
+
+
+  ClientSubnets:
+    Description: Lista de subredes cliente para asociar con el cluster de MSK
+    Type: List<String>
+
+
+  SecurityGroups:
+    Description: Lista de grupos de seguridad para asociar con el cluster de MSK
+    Type: List<String>
+
+
+  VolumeSize:
+    Description: El tamaño en GiB del volumen EBS para el disco de datos en cada nodo broker
+    Type: Number
+
+
+Resources:
+  MSKCluster:
+    Type: 'AWS::MSK::Cluster'
+    Properties:
+      ClusterName: !Ref ClusterName
+      KafkaVersion: !Ref KafkaVersion
+      NumberOfBrokerNodes: !Ref NumberOfBrokerNodes
+      BrokerNodeGroupInfo:
+        InstanceType: !Ref InstanceType
+        ClientSubnets: !Ref ClientSubnets
+        SecurityGroups: !Ref SecurityGroups
+        StorageInfo:
+          EbsStorageInfo:
+            VolumeSize: !Ref VolumeSize
+      EncryptionInfo:
+        EncryptionInTransit:
+          ClientBroker: 'TLS_PLAINTEXT'
+          InCluster: True
+      EnhancedMonitoring: 'PER_TOPIC_PER_BROKER'
+      Tags:
+        Name: !Ref ClusterName
+
+Outputs:
+  BootstrapBrokers:
+    Description: Una lista de uno o más nombres DNS (o IPs) y puertos de los brokers de Apache Kafka
+    Value: !GetAtt MSKCluster.BootstrapBrokers

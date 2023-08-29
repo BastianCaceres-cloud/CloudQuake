@@ -1,0 +1,116 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Plantilla de CloudFormation para crear un S3 Bucket y una distribucion de CloudFront
+
+Parameters:
+
+  Region:
+    Description: La región donde se desplegarán los recursos
+    Type: String
+    Default: us-east-1
+
+  BucketName:
+    Description: El nombre del bucket S3
+    Type: String
+
+  BucketACL:
+    Description: La lista de control de acceso (ACL) del bucket S3
+    Type: String
+    Default: Private
+
+  CloudFrontComment:
+    Description: Un comentario para la identidad de acceso de origen de CloudFront
+    Type: String
+    Default: OAI para bucket S3
+
+  CloudFrontDefaultTTL:
+    Description: El tiempo predeterminado (en segundos) que un objeto está en el caché de CloudFront
+    Type: Number
+    Default: 3600
+
+  CloudFrontMaxTTL:
+    Description: El tiempo máximo (en segundos) que un objeto está en el caché de CloudFront
+    Type: Number
+    Default: 86400
+
+  CloudFrontMinTTL:
+    Description: El tiempo mínimo que quieres que los objetos permanezcan en los cachés de CloudFront
+    Type: Number
+    Default: 0
+
+  CloudFrontViewerProtocolPolicy:
+    Description: El método que quieres que CloudFront use para determinar si usar HTTP o HTTPS
+    Type: String
+    Default: allow-all
+
+
+Resources:
+
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref BucketName
+      AccessControl: !Ref BucketACL
+
+
+  CloudFrontOAI:
+    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: !Ref CloudFrontComment
+
+  CloudFrontDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        DefaultRootObject: shell/index.html
+        CustomErrorResponses:
+          - ErrorCode: 403
+            ResponsePagePath: /shell/index.html
+            ResponseCode: 403
+            ErrorCachingMinTTL: 3600
+        PriceClass: PriceClass_100
+        Enabled: true
+        Origins:
+          - DomainName: !GetAtt [S3Bucket, RegionalDomainName]
+            Id: !Ref S3Bucket
+            S3OriginConfig:
+              OriginAccessIdentity: !Sub origin-access-identity/cloudfront/${CloudFrontOAI}
+        DefaultCacheBehavior:
+          AllowedMethods:
+            - DELETE
+            - GET
+            - HEAD
+            - OPTIONS
+            - PATCH
+            - POST
+            - PUT
+          CachedMethods:
+            - GET
+            - HEAD
+          TargetOriginId: !Ref S3Bucket
+          ForwardedValues:
+            QueryString: false
+            Cookies:
+              Forward: none
+          ViewerProtocolPolicy: !Ref CloudFrontViewerProtocolPolicy
+          MinTTL: !Ref CloudFrontMinTTL
+          DefaultTTL: !Ref CloudFrontDefaultTTL
+          MaxTTL: !Ref CloudFrontMaxTTL
+        Restrictions:
+          GeoRestriction:
+            RestrictionType: whitelist
+            Locations:
+              - CL    
+Outputs:
+
+  S3BucketName:
+    Description: El nombre del bucket S3
+    Value: !Ref S3Bucket
+
+  CloudFrontDistributionID:
+    Description: El ID de la distribución de CloudFront
+    Value: !Ref CloudFrontDistribution
+
+  CloudFrontDistributionDomainName:
+    Description: El nombre de dominio de la distribución de CloudFront
+    Value: !GetAtt [CloudFrontDistribution, DomainName]
