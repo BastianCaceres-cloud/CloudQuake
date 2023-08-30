@@ -1,0 +1,41 @@
+Parameters:
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+    Description: ID de la VPC
+
+  CidrList:
+    Type: List<String>
+    Description: Lista de Rangos de IP utilizado para ingress-egress con comas
+
+
+Resources:
+  SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security Group for Kafka
+
+      VpcId: !Ref VpcId
+
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 0
+          ToPort: 9092
+          CidrIp: !Select [0, !Ref CidrList]
+          Description: Inbound from VPC/Subnet CIDR
+
+        - IpProtocol: tcp
+          FromPort: 0
+          ToPort: 9092
+          CidrIp: !Select [1, !Ref CidrList]
+          Description: Inbound from Pod CIDR
+
+      SecurityGroupEgress:
+        - IpProtocol: tcp
+          FromPort: 0
+          ToPort: 9092
+          CidrIp: !Select [0, !Ref CidrList]
+
+        - IpProtocol: tcp
+          FromPort: 0
+          ToPort: 9092
+          CidrIp: !Select [1, !Ref CidrList]

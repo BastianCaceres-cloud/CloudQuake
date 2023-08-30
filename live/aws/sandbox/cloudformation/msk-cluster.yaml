@@ -14,6 +14,7 @@ Parameters:
   KafkaVersion:
     Description: La versión deseada del software Kafka
     Type: String
+    Default: 2.2.1
 
 
   NumberOfBrokerNodes:
@@ -24,21 +25,24 @@ Parameters:
   InstanceType:
     Description: El tipo de instancia para usar en los brokers de Kafka
     Type: String
+    Default: kafka.m5.large
 
 
   ClientSubnets:
     Description: Lista de subredes cliente para asociar con el cluster de MSK
-    Type: List<String>
+    Type: List<AWS::EC2::Subnet::Id>
+    
 
 
   SecurityGroups:
     Description: Lista de grupos de seguridad para asociar con el cluster de MSK
-    Type: List<String>
+    Type: List<AWS::EC2::SecurityGroup::Id>
+  
 
 
-  VolumeSize:
-    Description: El tamaño en GiB del volumen EBS para el disco de datos en cada nodo broker
-    Type: Number
+  # VolumeSize:
+  #   Description: El tamaño en GiB del volumen EBS para el disco de datos en cada nodo broker
+  #   Type: Number
 
 
 Resources:
@@ -52,9 +56,6 @@ Resources:
         InstanceType: !Ref InstanceType
         ClientSubnets: !Ref ClientSubnets
         SecurityGroups: !Ref SecurityGroups
-        StorageInfo:
-          EbsStorageInfo:
-            VolumeSize: !Ref VolumeSize
       EncryptionInfo:
         EncryptionInTransit:
           ClientBroker: 'TLS_PLAINTEXT'
