@@ -1,0 +1,22 @@
+#Params for DynamoDB name table
+Parameters:
+  DynamoDBTableName:
+    Type: String
+    Default: vault-data
+
+Resources:
+  DynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: Path
+          AttributeType: S
+        - AttributeName: Key
+          AttributeType: S
+      KeySchema:
+        - AttributeName: Path
+          KeyType: HASH
+        - AttributeName: Key
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+      TableName: !Ref DynamoDBTableName

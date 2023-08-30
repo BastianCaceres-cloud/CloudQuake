@@ -1,0 +1,28 @@
+# Add Parameters
+Parameters:
+  S3BucketName:
+    Type: String
+    Description: S3 Bucket Name
+    Default: my-s3-bucket
+
+Resources:
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref S3BucketName
+
+  S3BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref S3Bucket
+      PolicyDocument:
+        Statement:
+          - Sid: AllowStorageGatewayAccess
+            Effect: Allow
+            Principal:
+              Service: storagegateway.amazonaws.com
+            Action:
+              - s3:ListBucket
+              - s3:GetBucketLocation
+              - s3:ListBucketMultipartUploads
+            Resource: !Join ['', ['arn:aws:s3:::', !Ref S3Bucket]]

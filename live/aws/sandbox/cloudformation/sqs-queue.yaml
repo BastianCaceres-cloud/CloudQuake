@@ -1,0 +1,59 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Plantilla de CloudFormation para crear una cola SQS
+Parameters:
+  Region:
+    Description: La región donde se creará la cola SQS
+    Type: String
+    Default: us-east-1
+  
+  QueueName:
+    Description: El nombre de la cola SQS
+    Type: String
+  
+  DelaySeconds:
+    Description: El tiempo en segundos que se demorará la entrega de todos los mensajes en la cola. Un entero de 0 a 900 (15 minutos).
+    Type: Number
+    Default: 0
+
+  MaxMessageSize:
+    Description: El límite en bytes que un mensaje puede contener antes de considerarse demasiado grande. Un entero de 1,024 bytes (1 KiB) a 262,144 bytes (256 KiB).
+    Type: Number
+    Default: 262144
+  
+  MessageRetentionSeconds:
+    Description: El tiempo en segundos que Amazon SQS retiene un mensaje. Un entero que representa segundos, de 60 (1 minuto) a 1209600 (14 días).
+    Type: Number
+    Default: 345600
+  
+  ReceiveWaitTimeSeconds:
+    Description: El tiempo durante el cual una llamada ReceiveMessage esperará a que llegue un mensaje. Un entero de 0 a 20 (segundos).
+    Type: Number
+    Default: 0
+  
+  VisibilityTimeoutSeconds:
+    Description: El tiempo de visibilidad para la cola. Un entero de 0 a 43200 (12 horas).
+    Type: Number
+    Default: 30
+
+Resources:
+  SQSQueue:
+    Type: 'AWS::SQS::Queue'
+    Properties:
+      QueueName: !Ref QueueName
+      DelaySeconds: !Ref DelaySeconds
+      MaximumMessageSize: !Ref MaxMessageSize
+      MessageRetentionPeriod: !Ref MessageRetentionSeconds
+      ReceiveMessageWaitTimeSeconds: !Ref ReceiveWaitTimeSeconds
+      VisibilityTimeout: !Ref VisibilityTimeoutSeconds
+      Tags:
+        - Key: "ManagedBy"
+          Value: "CloudFormation"
+
+Outputs:
+  QueueURL:
+    Description: La URL de la cola SQS
+    Value: !Ref SQSQueue
+    
+  QueueARN:
+    Description: El ARN de la cola SQS
+    Value: !GetAtt [SQSQueue, Arn]

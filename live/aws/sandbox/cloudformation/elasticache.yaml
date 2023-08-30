@@ -1,0 +1,53 @@
+Parameters:
+  RedisSubnets:
+    Type: List<AWS::EC2::Subnet::Id>
+    Description: Subnets for Redis subnetgroup
+
+  RedisVpcId:
+    Type: AWS::EC2::VPC::Id
+    Description: VPC for Redis security group
+  CidrIp:
+    Type: String
+    Description: IP range VPC/Subnet for Redis security group
+    
+  CidrIp2:
+    Type: String
+    Description: IP range Pod for Redis security group
+  
+  RedisClusterName:
+    Type: String
+    Description: Redis cluster name
+
+
+Resources:
+  RedisCluster:
+    Type: AWS::ElastiCache::CacheCluster
+    Properties:
+      ClusterName: !Ref RedisClusterName
+      CacheNodeType: cache.t2.micro
+      Engine: redis
+      NumCacheNodes: 1
+      CacheSubnetGroupName: !Ref RedisSubnetGroup
+      VpcSecurityGroupIds:
+        - !Ref RedisSecurityGroup
+
+  RedisSubnetGroup:
+    Type: AWS::ElastiCache::SubnetGroup
+    Properties:
+      Description: Subnet group for Redis
+      SubnetIds: !Ref RedisSubnets
+
+  RedisSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !Ref RedisVpcId
+      GroupDescription: Security group for Redis
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 6379
+          ToPort: 6379
+          CidrIp: !Ref CidrIp
+        - IpProtocol: tcp
+          FromPort: 6379
+          ToPort: 6379
+          CidrIp: !Ref CidrIp2
