@@ -1,0 +1,13 @@
+Parameters:
+  DomainName:
+    Type: String
+    Description: The fully qualified domain name (FQDN) to secure with the ACM certificate.
+    AllowedPattern: ^(\*\.)?(((?!-)[A-Za-z0-9-]{0,62}[A-Za-z0-9])\.)+((?!-)[A-Za-z0-9-]{1,62}[A-Za-z0-9])$
+    ConstraintDescription: Must be a valid FQDN.
+
+Resources:
+  MyCertificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: !Ref DomainName
+      ValidationMethod: DNS

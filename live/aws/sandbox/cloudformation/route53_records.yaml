@@ -1,0 +1,50 @@
+Parameters:
+  HostedZoneId:
+    Description: 'El ID de la Hosted Zone'
+    Type: String
+
+Resources:
+
+  # Registro A para direccionar a una IP
+  RecordA:
+    Type: 'AWS::Route53::RecordSet'
+    Properties:
+      HostedZoneId: !Ref HostedZoneId
+      Name: "frontend.cloudbuilder.cl."
+      Type: A
+      TTL: '300'
+      ResourceRecords:
+        - '192.0.2.44'
+
+  RecordB:
+    Type: 'AWS::Route53::RecordSet'
+    Properties:
+      HostedZoneId: !Ref HostedZoneId
+      Name: "backend.cloudbuilder.cl."
+      Type: A
+      TTL: '300'
+      ResourceRecords:
+        - '192.0.2.45'
+
+  # Registro CNAME para direccionar a otro subdominio
+  # RecordCNAME:
+  #   Type: 'AWS::Route53::RecordSet'
+  #   Properties:
+  #     HostedZoneId: !Ref HostedZoneId
+  #     Name: "subdominioCNAME.mi-dominio.com."
+  #     Type: CNAME
+  #     TTL: '300'
+  #     ResourceRecords:
+  #       - 'otrosubdominio.mi-dominio.com.'
+
+  # Registro TXT para un valor de texto (por ejemplo, para verificación de propiedad de dominio)
+  # RecordTXT:
+  #   Type: 'AWS::Route53::RecordSet'
+  #   Properties:
+  #     HostedZoneId: !Ref HostedZoneId
+  #     Name: "subdominioTXT.mi-dominio.com."
+  #     Type: TXT
+  #     TTL: '300'
+  #     ResourceRecords:
+  #       - '"Texto de ejemplo para el registro TXT"'
+
