@@ -1,7 +1,25 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: Plantilla de CloudFormation para crear un S3 Bucket y una distribucion de CloudFront
 
+
+Mappings:
+  BucketNames:
+    sandbox:
+      Name: "cfront-s3-pagopension-sandbox"
+    dev:
+      Name: "cfront-s3-pagopension-dev"
+    qa: 
+      Name: "cfront-s3-pagopension-qa"
+    prod:
+      Name: "cfront-s3-pagopension-prod"
+
+
 Parameters:
+
+  Entorno:
+    Description: El entorno donde se desplegarán los recursos sandbox, dev, qa, prod
+    Type: String
+    Default: sandbox
 
   Region:
     Description: La región donde se desplegarán los recursos
@@ -9,8 +27,9 @@ Parameters:
     Default: us-east-1
 
   BucketName:
-    Description: El nombre del bucket S3
+    Description: El nombre del bucket s3 sera generado automaticamente seleccionando el entorno
     Type: String
+
 
   BucketACL:
     Description: La lista de control de acceso (ACL) del bucket S3
@@ -41,6 +60,20 @@ Parameters:
     Description: El método que quieres que CloudFront use para determinar si usar HTTP o HTTPS
     Type: String
     Default: allow-all
+  
+  CertificateArn:
+    Description: El ARN del certificado de ACM
+    Type: String
+ 
+  # WebACLId:
+  #   Description: El ID del Web ACL
+  #   Type: String
+
+  MyAliases:
+    Description: Los alias de la distribución de CloudFront
+    Type: CommaDelimitedList
+    Default: ''
+
 
 
 Resources:
@@ -48,7 +81,7 @@ Resources:
   S3Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Ref BucketName
+      BucketName: !FindInMap [BucketNames, !Ref Entorno, Name]
       AccessControl: !Ref BucketACL
 
 
@@ -100,7 +133,15 @@ Resources:
           GeoRestriction:
             RestrictionType: whitelist
             Locations:
-              - CL    
+              - CL
+        ViewerCertificate:
+          AcmCertificateArn: !Ref CertificateArn
+          SslSupportMethod: sni-only
+          MinimumProtocolVersion: TLSv1.2_2021
+          # CloudFrontDefaultCertificate: true
+        # WebACLId: !Ref WebACLId
+        Aliases: !Ref MyAliases
+
 Outputs:
 
   S3BucketName:
