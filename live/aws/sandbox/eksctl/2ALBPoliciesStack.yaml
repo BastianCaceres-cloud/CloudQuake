@@ -1,0 +1,242 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: J2CAWS IAM Policies for EKS Control Plane and Workers Nodes to interact with CloudWatch, ELB, ALB-IngressController, AppMesh, AutoScaler, External-DNS, ECR
+
+
+Parameters:
+  OIDCId:
+    Type: String
+    Description: The ID of the Open Id Connect Provider created with the command 'eksctl utils associate-iam-oidc-provider'
+
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: 'OIDC Provider Info'
+        Parameters:
+          - OIDCId
+
+
+Resources:
+  ALBKubeServiceAccountRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      Description: 'IAM Role for Kubernetes Service Account that allows to make calls to AWS APIs'
+      RoleName: ALBServiceAccountRole
+      AssumeRolePolicyDocument:
+        Fn::Sub: |
+          {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Principal": {
+                  "Federated": "arn:${AWS::Partition}:iam::${AWS::AccountId}:oidc-provider/oidc.eks.${AWS::Region}.amazonaws.com/id/${OIDCId}"
+                },
+                "Action": "sts:AssumeRoleWithWebIdentity",
+                "Condition": {
+                  "StringEquals": {
+                    "oidc.eks.${AWS::Region}.amazonaws.com/id/${OIDCId}:aud": "sts.amazonaws.com",
+                    "oidc.eks.${AWS::Region}.amazonaws.com/id/${OIDCId}:sub": "system:serviceaccount:kube-system:aws-load-balancer-controller"
+                  }
+                }
+              }
+            ]
+          }
+      Tags:
+        - Key: Name
+          Value: ALBServiceAccountRole
+
+  # Create IAM policy for the AWS Load Balancer Controller that allows it to make calls to AWS APIs on your behalf.
+  PolicyAWSALBServiceAccount:
+    Type: 'AWS::IAM::Policy'
+    DependsOn: ALBKubeServiceAccountRole
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - 'ec2:CreateTags'
+            Condition:
+              'Null':
+                'aws:RequestTag/elbv2.k8s.aws/cluster': 'false'
+              StringEquals:
+                'ec2:CreateAction': 'CreateSecurityGroup'
+            Effect: Allow
+            Resource: 
+              Fn::Sub: 'arn:${AWS::Partition}:ec2:*:*:security-group/*'
+          - Action:
+              - 'ec2:CreateTags'
+              - 'ec2:DeleteTags'
+            Condition:
+              'Null': 
+                'aws:RequestTag/elbv2.k8s.aws/cluster': 'true'
+                'aws:ResourceTag/elbv2.k8s.aws/cluster': 'false'
+            Effect: Allow
+            Resource: 
+              Fn::Sub: 'arn:${AWS::Partition}:ec2:*:*:security-group/*'
+          - Action:
+              - 'elasticloadbalancing:CreateLoadBalancer'
+              - 'elasticloadbalancing:CreateTargetGroup'
+            Condition:
+              'Null':
+                'aws:RequestTag/elbv2.k8s.aws/cluster': 'false'
+            Effect: Allow
+            Resource: '*'
+          - Action:
+              - 'elasticloadbalancing:AddTags'
+              - 'elasticloadbalancing:RemoveTags'
+            Condition:
+              'Null':
+                'aws:RequestTag/elbv2.k8s.aws/cluster': 'true'
+                'aws:ResourceTag/elbv2.k8s.aws/cluster': 'false'
+            Effect: Allow
+            Resource:
+              - Fn::Sub: 'arn:${AWS::Partition}:elasticloadbalancing:*:*:targetgroup/*/*'
+              - Fn::Sub: 'arn:${AWS::Partition}:elasticloadbalancing:*:*:loadbalancer/net/*/*'
+              - Fn::Sub: 'arn:${AWS::Partition}:elasticloadbalancing:*:*:loadbalancer/app/*/*'
+          - Action:
+              - 'elasticloadbalancing:AddTags'
+              - 'elasticloadbalancing:RemoveTags'
+            Effect: Allow
+            Resource:
+              - Fn::Sub: 'arn:${AWS::Partition}:elasticloadbalancing:*:*:listener/net/*/*/*'
+              - Fn::Sub: 'arn:${AWS::Partition}:elasticloadbalancing:*:*:listener/app/*/*/*'
+              - Fn::Sub: 'arn:${AWS::Partition}:elasticloadbalancing:*:*:listener-rule/net/*/*/*'
+              - Fn::Sub: 'arn:${AWS::Partition}:elasticloadbalancing:*:*:listener-rule/app/*/*/*'
+          
+          - Action:
+              - 'elasticloadbalancing:AddTags'
+            Condition:
+              StringEquals:
+                elasticloadbalancing:CreateAction:
+                - CreateTargetGroup
+                - CreateLoadBalancer
+              'Null':
+                aws:RequestTag/elbv2.k8s.aws/cluster: 'false'
+            Effect: Allow
+            Resource:
+              - Fn::Sub: 'arn:${AWS::Partition}:elasticloadbalancing:*:*:targetgroup/*/*'
+              - Fn::Sub: 'arn:${AWS::Partition}:elasticloadbalancing:*:*:loadbalancer/net/*/*'
+              - Fn::Sub: 'arn:${AWS::Partition}:elasticloadbalancing:*:*:loadbalancer/app/*/*'
+
+          - Action:
+              - 'ec2:AuthorizeSecurityGroupIngress'
+              - 'ec2:RevokeSecurityGroupIngress'
+              - 'ec2:DeleteSecurityGroup'
+            Condition:
+              'Null':
+                'aws:ResourceTag/elbv2.k8s.aws/cluster': 'false'
+            Effect: Allow
+            Resource: '*'
+          - Action:
+              - 'elasticloadbalancing:RegisterTargets'
+              - 'elasticloadbalancing:DeregisterTargets'
+            Effect: Allow
+            Resource: 
+              Fn::Sub: 'arn:${AWS::Partition}:elasticloadbalancing:*:*:targetgroup/*/*'
+          - Action:
+              - 'iam:CreateServiceLinkedRole'
+            Condition:
+              StringEquals:
+                'iam:AWSServiceName': 'elasticloadbalancing.amazonaws.com'
+            Effect: Allow
+            Resource: '*'
+          - Action:
+              - 'ec2:DescribeAccountAttributes'
+              - 'ec2:DescribeAddresses'
+              - 'ec2:DescribeAvailabilityZones'
+              - 'ec2:DescribeInternetGateways'
+              - 'ec2:DescribeVpcs'
+              - 'ec2:DescribeVpcPeeringConnections'
+              - 'ec2:DescribeSubnets'
+              - 'ec2:DescribeSecurityGroups'
+              - 'ec2:DescribeInstances'
+              - 'ec2:DescribeNetworkInterfaces'
+              - 'ec2:DescribeTags'
+              - 'ec2:GetCoipPoolUsage'
+              - 'ec2:DescribeCoipPools'
+              - 'elasticloadbalancing:DescribeLoadBalancers'
+              - 'elasticloadbalancing:DescribeLoadBalancerAttributes'
+              - 'elasticloadbalancing:DescribeListeners'
+              - 'elasticloadbalancing:DescribeListenerCertificates'
+              - 'elasticloadbalancing:DescribeSSLPolicies'
+              - 'elasticloadbalancing:DescribeRules'
+              - 'elasticloadbalancing:DescribeTargetGroups'
+              - 'elasticloadbalancing:DescribeTargetGroupAttributes'
+              - 'elasticloadbalancing:DescribeTargetHealth'
+              - 'elasticloadbalancing:DescribeTags'
+            Effect: Allow
+            Resource: '*'
+          - Action:
+              - 'cognito-idp:DescribeUserPoolClient'
+              - 'acm:ListCertificates'
+              - 'acm:DescribeCertificate'
+              - 'iam:ListServerCertificates'
+              - 'iam:GetServerCertificate'
+              - 'waf-regional:GetWebACL'
+              - 'waf-regional:GetWebACLForResource'
+              - 'waf-regional:AssociateWebACL'
+              - 'waf-regional:DisassociateWebACL'
+              - 'wafv2:GetWebACL'
+              - 'wafv2:GetWebACLForResource'
+              - 'wafv2:AssociateWebACL'
+              - 'wafv2:DisassociateWebACL'
+              - 'shield:GetSubscriptionState'
+              - 'shield:DescribeProtection'
+              - 'shield:CreateProtection'
+              - 'shield:DeleteProtection'
+            Effect: Allow
+            Resource: '*'
+          - Action:
+              - 'ec2:AuthorizeSecurityGroupIngress'
+              - 'ec2:RevokeSecurityGroupIngress'
+            Effect: Allow
+            Resource: '*'
+          - Action:
+              - 'ec2:CreateSecurityGroup'
+            Effect: Allow
+            Resource: '*'
+          - Action:
+              - 'elasticloadbalancing:CreateListener'
+              - 'elasticloadbalancing:DeleteListener'
+              - 'elasticloadbalancing:CreateRule'
+              - 'elasticloadbalancing:DeleteRule'
+            Effect: Allow
+            Resource: '*'
+          - Action:
+              - 'elasticloadbalancing:ModifyLoadBalancerAttributes'
+              - 'elasticloadbalancing:SetIpAddressType'
+              - 'elasticloadbalancing:SetSecurityGroups'
+              - 'elasticloadbalancing:SetSubnets'
+              - 'elasticloadbalancing:DeleteLoadBalancer'
+              - 'elasticloadbalancing:ModifyTargetGroup'
+              - 'elasticloadbalancing:ModifyTargetGroupAttributes'
+              - 'elasticloadbalancing:DeleteTargetGroup'
+            Condition:
+              'Null': 
+                'aws:ResourceTag/elbv2.k8s.aws/cluster': 'false'
+            Effect: Allow
+            Resource: '*'
+          - Action:
+              - 'elasticloadbalancing:SetWebAcl'
+              - 'elasticloadbalancing:ModifyListener'
+              - 'elasticloadbalancing:AddListenerCertificates'
+              - 'elasticloadbalancing:RemoveListenerCertificates'
+              - 'elasticloadbalancing:ModifyRule'
+            Effect: Allow
+            Resource: '*'
+        Version: 2012-10-17
+      PolicyName: ALBControllerIAMPolicy
+      Roles:
+        - Ref: ALBKubeServiceAccountRole
+
+Outputs:
+  ALBKubeServiceAccountRoleARN:
+    Description: Kubernetes Service Account Role ARN
+    Value:
+      Fn::GetAtt:
+        - ALBKubeServiceAccountRole
+        - Arn
+    Export: 
+      Name: ALBKubeServiceAccountRoleARN
