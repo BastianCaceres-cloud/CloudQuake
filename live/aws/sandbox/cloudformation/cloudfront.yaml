@@ -17,9 +17,14 @@ Mappings:
 Parameters:
 
   Entorno:
-    Description: El entorno donde se desplegarán los recursos sandbox, dev, qa, prod
+    Description: El entorno donde se desplegarán los recursos (sandbox, dev, qa, prod)
     Type: String
     Default: sandbox
+    AllowedValues:
+      - sandbox
+      - dev
+      - qa
+      - prod
 
   Region:
     Description: La región donde se desplegarán los recursos
@@ -65,9 +70,10 @@ Parameters:
     Description: El ARN del certificado de ACM
     Type: String
  
-  # WebACLId:
-  #   Description: El ID del Web ACL
-  #   Type: String
+  WebACLArn:
+    Description: El ID del Web ACL
+    Type: String
+  
 
   MyAliases:
     Description: Los alias de la distribución de CloudFront
@@ -139,7 +145,7 @@ Resources:
           SslSupportMethod: sni-only
           MinimumProtocolVersion: TLSv1.2_2021
           # CloudFrontDefaultCertificate: true
-        # WebACLId: !Ref WebACLId
+        WebACLId: !Ref WebACLArn
         Aliases: !Ref MyAliases
 
 Outputs:

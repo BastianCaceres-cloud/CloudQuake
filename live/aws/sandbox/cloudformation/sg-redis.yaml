@@ -1,0 +1,38 @@
+Parameters:
+
+  RedisVpcId:
+    Type: AWS::EC2::VPC::Id
+    Description: VPC for Redis security group
+  CidrIp:
+    Type: String
+    Description: IP range VPC/Subnet for Redis security group
+  CidrIp1:
+    Type: String
+    Description: IP range VPC/Subnet for Redis security group 
+  CidrIp2:
+    Type: String
+    Description: IP range Pod for Redis security group
+  
+
+
+
+Resources:
+
+  RedisSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !Ref RedisVpcId
+      GroupDescription: Security group for Redis
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 6379
+          ToPort: 6379
+          CidrIp: !Ref CidrIp
+        - IpProtocol: tcp
+          FromPort: 6379
+          ToPort: 6379
+          CidrIp: !Ref CidrIp1
+        - IpProtocol: tcp
+          FromPort: 6379
+          ToPort: 6379
+          CidrIp: !Ref CidrIp2

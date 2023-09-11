@@ -1,0 +1,58 @@
+---
+Mappings:
+  EcrRepositoryNames:
+    sandbox:
+      Name: "pagopension-sandbox"
+    dev:
+      Name: "pagopension-dev"
+    qa: 
+      Name: "pagopension-qa"
+    prod:
+      Name: "pagopension-prod"
+
+
+Parameters:
+  Entorno:
+    Description: El entorno donde se desplegarán los recursos (sandbox, dev, qa, prod)
+    Type: String
+    Default: sandbox
+    AllowedValues:
+      - sandbox
+      - dev
+      - qa
+      - prod
+
+
+  EcrImageTagMutability:
+    Description: "La mutabilidad de las etiquetas de la imagen"
+    Type: String
+    Default: "MUTABLE"
+    AllowedValues:
+      - "MUTABLE"
+      - "IMMUTABLE"
+
+  EcrScanOnPush:
+    Description: "Habilitar o deshabilitar el escaneo de la imagen al hacer push"
+    Type: String
+    Default: "true"
+    AllowedValues:
+      - "true"
+      - "false"
+
+Resources:
+  EcrRepository1:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: !FindInMap [EcrRepositoryNames, !Ref Entorno, Name]
+      ImageTagMutability: !Ref EcrImageTagMutability
+      ImageScanningConfiguration:
+        scanOnPush: !If [EcrScanOnPushCondition, "true", "false"]
+
+Conditions:
+  EcrScanOnPushCondition: !Equals [!Ref EcrScanOnPush, "true"]
+
+
+Outputs:
+  EcrRepositoryUrl1:
+    Description: "El URL del repositorio de ECR"
+    Value: !Sub "https://${AWS::Region}.amazonaws.com/${EcrRepository1}"

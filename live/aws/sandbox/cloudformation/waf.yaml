@@ -1,0 +1,63 @@
+Parameters:
+  AllowedIPs:
+    Type: CommaDelimitedList
+    Description: List of allowed IP addresses or CIDR ranges.
+
+  Entorno:
+    Description: El entorno donde se desplegarán los recursos (sandbox, dev, qa, prod)
+    Type: String
+    Default: sandbox
+    AllowedValues:
+      - sandbox
+      - dev
+      - qa
+      - prod
+
+Mappings:
+  ACLNames:
+    sandbox:
+      Name: "webacl-pagopension-sandbox"
+    dev:
+      Name: "webacl-pagopension-dev"
+    qa: 
+      Name: "webacl-pagopension-qa"
+    prod:
+      Name: "webacl-pagopension-prod"
+
+Resources:
+  IPSet:
+    Type: AWS::WAFv2::IPSet
+    Properties:
+      Name: !FindInMap [ACLNames, !Ref Entorno, Name]
+      Scope: CLOUDFRONT
+      IPAddressVersion: IPV4
+      Addresses: !Split [",", !Join [",", !Ref AllowedIPs]]
+
+  WebACL:
+    Type: AWS::WAFv2::WebACL
+    Properties:
+      Name: !FindInMap [ACLNames, !Ref Entorno, Name]
+      Scope: CLOUDFRONT
+      DefaultAction:
+        Allow: {}
+      Rules:
+        - Name: AllowMyIPs
+          Priority: 0
+          Action:
+            Allow: {}
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: AllowMyIPs
+          Statement:
+            IPSetReferenceStatement:
+              Arn: !GetAtt IPSet.Arn
+      VisibilityConfig:
+        SampledRequestsEnabled: true
+        CloudWatchMetricsEnabled: true
+        MetricName: MyWebACLVisibility
+
+Outputs:
+  WebACLArn:
+    Description: The ARN of the created WebACL
+    Value: !GetAtt WebACL.Arn
