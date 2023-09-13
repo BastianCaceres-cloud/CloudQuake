@@ -1,15 +1,31 @@
-# Add Parameters
+Mappings:
+  S3BucketNames:
+    sandbox:
+      Name: "s3-storagegw-pagopension-sandbox"
+    dev:
+      Name: "s3-storagegw-pagopension-dev"
+    qa: 
+      Name: "s3-storagegw-pagopension-qa"
+    prod:
+      Name: "s3-storagegw-pagopension-prod"
+
+
 Parameters:
-  S3BucketName:
+  Entorno:
+    Description: El entorno donde se desplegarán los recursos (sandbox, dev, qa, prod)
     Type: String
-    Description: S3 Bucket Name
-    Default: my-s3-bucket
+    Default: sandbox
+    AllowedValues:
+      - sandbox
+      - dev
+      - qa
+      - prod
 
 Resources:
   S3Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Ref S3BucketName
+      BucketName: !FindInMap [S3BucketNames, !Ref Entorno, Name]
 
   S3BucketPolicy:
     Type: AWS::S3::BucketPolicy

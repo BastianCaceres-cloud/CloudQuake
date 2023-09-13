@@ -1,0 +1,106 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Plantilla de CloudFormation para crear un cluster de MSK
+
+Mappings:
+  ClusterNames:
+    sandbox:
+      Name: "mskcluster-pagopension-sandbox"
+    dev:
+      Name: "mskcluster-pagopension-dev"
+    qa: 
+      Name: "mskcluster-pagopension-qa"
+    prod:
+      Name: "mskcluster-pagopension-prod"
+
+Parameters:
+  Entorno:
+    Description: El entorno donde se desplegarán los recursos (sandbox, dev, qa, prod)
+    Type: String
+    Default: sandbox
+    AllowedValues:
+      - sandbox
+      - dev
+      - qa
+      - prod
+
+  MSKVpcId:
+    Type: AWS::EC2::VPC::Id
+    Description: VPC para desplegar el cluster de MSK
+
+
+  RedisSubnets:
+    Type: List<AWS::EC2::Subnet::Id>
+    Description: Subnets para el cluster de MSK
+
+  InstancesTypes:
+    Type: String
+    Description: Tipo de instancia para el cluster de MSK
+    Default: kafka.t3.small
+    AllowedValues:
+      - kafka.t3.small
+      - kafka.m5.large
+      - kafka.m5.xlarge
+      - kafka.m5.2xlarge
+      - kafka.m5.4xlarge
+      - kafka.m5.8xlarge
+      - kafka.m5.12xlarge
+      - kafka.m5.16xlarge
+      - kafka.m5.24xlarge 
+
+  CidrIp:
+    Type: String
+    Description: IP range VPC/Subnet for Redis security group
+    
+  CidrIp2:
+    Type: String
+    Description: IP range Pod for Redis security group
+
+Resources:
+  MSKCluster:
+    Properties:
+      BrokerNodeGroupInfo:
+        ClientSubnets:
+        - !Select [0, !Ref RedisSubnets]
+        - !Select [1, !Ref RedisSubnets]
+
+        InstanceType: !Ref InstancesTypes
+
+        SecurityGroups:
+        - Ref: MSKSecurityGroup
+
+      ClusterName: !FindInMap [ClusterNames, !Ref Entorno, Name]
+      EnhancedMonitoring: PER_BROKER
+      KafkaVersion: 2.2.1
+      LoggingInfo:
+        BrokerLogs:
+          CloudWatchLogs:
+            Enabled: false
+          Firehose:
+            Enabled: false
+          S3:
+            Enabled: false
+      NumberOfBrokerNodes: 2
+      OpenMonitoring:
+        Prometheus:
+          JmxExporter:
+            EnabledInBroker: true
+          NodeExporter:
+            EnabledInBroker: true
+    Type: AWS::MSK::Cluster
+  MSKSecurityGroup:
+    Properties:
+      GroupDescription: Security Group for MSK Cluster
+      SecurityGroupEgress:
+      - CidrIp: 0.0.0.0/0
+        IpProtocol: '-1'
+      SecurityGroupIngress:
+      - CidrIp: !Ref CidrIp
+        FromPort: 9092
+        IpProtocol: tcp
+        ToPort: 9092
+      - CidrIp: !Ref CidrIp2
+        FromPort: 2181
+        IpProtocol: tcp
+        ToPort: 2181
+      VpcId: !Ref MSKVpcId
+    Type: AWS::EC2::SecurityGroup

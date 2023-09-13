@@ -11,7 +11,7 @@ Parameters:
 Resources:
   SecurityGroup:
     Type: AWS::EC2::SecurityGroup
-    Properties:
+    Properties:+
       GroupDescription: Security Group for Kafka
 
       VpcId: !Ref VpcId

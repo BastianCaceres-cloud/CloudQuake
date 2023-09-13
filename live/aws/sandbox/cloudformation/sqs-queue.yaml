@@ -1,15 +1,35 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: Plantilla de CloudFormation para crear una cola SQS
+
+Mappings:
+  QueueNames:
+    sandbox:
+      Name: "sqs-pagopension-sandbox"
+    dev:
+      Name: "sqs-pagopension-dev"
+    qa: 
+      Name: "sqs-pagopension-qa"
+    prod:
+      Name: "sqs-pagopension-prod"
+
+
 Parameters:
+  Entorno:
+    Description: El entorno donde se desplegarán los recursos (sandbox, dev, qa, prod)
+    Type: String
+    Default: sandbox
+    AllowedValues:
+      - sandbox
+      - dev
+      - qa
+      - prod
+
   Region:
     Description: La región donde se creará la cola SQS
     Type: String
     Default: us-east-1
   
-  QueueName:
-    Description: El nombre de la cola SQS
-    Type: String
-  
+
   DelaySeconds:
     Description: El tiempo en segundos que se demorará la entrega de todos los mensajes en la cola. Un entero de 0 a 900 (15 minutos).
     Type: Number
@@ -39,7 +59,7 @@ Resources:
   SQSQueue:
     Type: 'AWS::SQS::Queue'
     Properties:
-      QueueName: !Ref QueueName
+      QueueName: !FindInMap [QueueNames, !Ref Entorno, Name]
       DelaySeconds: !Ref DelaySeconds
       MaximumMessageSize: !Ref MaxMessageSize
       MessageRetentionPeriod: !Ref MessageRetentionSeconds
@@ -48,6 +68,8 @@ Resources:
       Tags:
         - Key: "ManagedBy"
           Value: "CloudFormation"
+
+
 
 Outputs:
   QueueURL:

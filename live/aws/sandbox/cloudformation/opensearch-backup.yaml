@@ -1,0 +1,106 @@
+  Mappings:
+    ClusterNames:
+      sandbox:
+        Name: "opensearch-pagopension-sb"
+      dev:
+        Name: "opensearch-pagopension-de"
+      qa: 
+        Name: "opensearch-pagopension-qa"
+      prod:
+        Name: "opensearch-pagopension-pd"
+
+  Parameters:
+    Entorno:
+      Description: El entorno donde se desplegarán los recursos (sandbox, dev, qa, prod)
+      Type: String
+      Default: sandbox
+      AllowedValues:
+        - sandbox
+        - dev
+        - qa
+        - prod
+
+    SetEbsVolumeSize:
+      Type: Number
+      Description: Tamaño del volumen EBS en GB
+      Default: 10
+      MinValue: 10
+      MaxValue: 16384
+      ConstraintDescription: El tamaño del volumen debe ser mayor o igual a 10 GB y menor o igual a 16384 GB
+
+    MasterUserName:
+      Description: El nombre de usuario master para la base de datos de usuarios interna
+      Type: String
+      Default: AdminOpenSearch
+
+    MasterUserPassword:
+      Description: La contraseña para el usuario master
+      Type: String
+      NoEcho: true
+      MinLength: 8
+      Description: La contraseña debe tener al menos 8 caracteres.
+      Default: Admin2023!
+
+  Resources:
+    OpenSearchServiceDomain:
+      Type: AWS::OpenSearchService::Domain
+      Properties:
+        DomainName: !FindInMap [ClusterNames, !Ref Entorno, Name]
+        EngineVersion: 'OpenSearch_1.0'
+        EBSOptions:
+          EBSEnabled: true
+          VolumeSize: !Ref SetEbsVolumeSize
+          VolumeType: 'gp2'
+        AccessPolicies:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: 'Allow'
+              Principal:
+                AWS: '*'
+              Action: 'es:*'
+              Resource: !Sub 
+                - "arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/${DomainName}/*"
+                - DomainName: !FindInMap [ClusterNames, !Ref Entorno, Name]
+        AdvancedSecurityOptions:
+          Enabled: true
+          InternalUserDatabaseEnabled: true
+          MasterUserOptions:
+            MasterUserName: !Ref MasterUserName
+            MasterUserPassword: !Ref MasterUserPassword
+        NodeToNodeEncryptionOptions:
+          Enabled: true
+        EncryptionAtRestOptions:
+          Enabled: true
+        DomainEndpointOptions:
+          EnforceHTTPS: true
+          
+    MyUserPool:
+      Type: "AWS::Cognito::UserPool"
+      Properties:
+        UserPoolName: !Sub "UserPool-${Entorno}"  # Utilizando el parámetro Entorno que ya tienes definido
+        AliasAttributes:
+          - email
+        AutoVerifiedAttributes:
+          - email
+        Schema:
+          - Name: email
+            AttributeDataType: String
+            Mutable: true
+            Required: true
+            StringAttributeConstraints:
+              MinLength: "1"
+              MaxLength: "256"
+        MfaConfiguration: OFF  # Puedes cambiar esto según tus necesidades
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireUppercase: true
+          RequireLowercase: true
+          RequireNumbers: true
+          RequireSymbols: true
+        EmailVerificationMessage: "Your verification code is {####}."
+        EmailVerificationSubject: "Your verification code"
+        AdminCreateUserConfig:
+          AllowAdminCreateUserOnly: true
+        UsernameAttributes:
+          - email
+

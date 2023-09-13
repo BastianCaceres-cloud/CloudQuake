@@ -4,6 +4,28 @@ Parameters:
     Type: String
     Default: vault-data
 
+Mappings:
+  DynamoDBTableNames:
+    sandbox:
+      Name: "vault-data-pagopension-sandbox"
+    dev:
+      Name: "vault-data-pagopension-dev"
+    qa: 
+      Name: "vault-data-pagopension-qa"
+    prod:
+      Name: "vault-data-pagopension-prod"
+
+Parameters:
+  Entorno:
+    Description: El entorno donde se desplegarán los recursos (sandbox, dev, qa, prod)
+    Type: String
+    Default: sandbox
+    AllowedValues:
+      - sandbox
+      - dev
+      - qa
+      - prod
+
 Resources:
   DynamoDBTable:
     Type: AWS::DynamoDB::Table
@@ -19,4 +41,4 @@ Resources:
         - AttributeName: Key
           KeyType: RANGE
       BillingMode: PAY_PER_REQUEST
-      TableName: !Ref DynamoDBTableName
+      TableName: !FindInMap [DynamoDBTableNames, !Ref Entorno, Name]

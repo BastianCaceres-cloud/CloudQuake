@@ -41,14 +41,14 @@ Resources:
       DefaultAction:
         Allow: {}
       Rules:
-        - Name: AllowMyIPs
+        - Name: !FindInMap [ACLNames, !Ref Entorno, Name]
           Priority: 0
           Action:
             Allow: {}
           VisibilityConfig:
             SampledRequestsEnabled: true
             CloudWatchMetricsEnabled: true
-            MetricName: AllowMyIPs
+            MetricName: !FindInMap [ACLNames, !Ref Entorno, Name]
           Statement:
             IPSetReferenceStatement:
               Arn: !GetAtt IPSet.Arn
