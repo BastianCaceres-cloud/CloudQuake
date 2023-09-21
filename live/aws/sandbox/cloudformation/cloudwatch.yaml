@@ -1,0 +1,53 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Plantilla de AWS CloudFormation para Amazon CloudWatch
+
+Resources:
+  MyCloudWatchAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: MyCPUUtilizationAlarm
+      AlarmDescription: Alarma de utilización de CPU
+      Namespace: AWS/EC2
+      MetricName: CPUUtilization
+      Dimensions:
+        - Name: InstanceId
+          Value: i-0123456789abcdef0
+      ComparisonOperator: GreaterThanThreshold
+      Threshold: 80
+      EvaluationPeriods: 3
+      Period: 300
+      Statistic: Average 
+      AlarmActions:
+        - Ref: MySNSTopic 
+
+  MySNSTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      DisplayName: MySNSTopic
+      TopicName: MySNSTopic
+
+  MyCloudWatchDashboard:
+    Type: AWS::CloudWatch::Dashboard
+    Properties:
+      DashboardName: MyDashboard
+      DashboardBody: |
+        {
+          "widgets": [
+            {
+              "type": "metric",
+              "x": 0,
+              "y": 0,
+              "width": 12,
+              "height": 6,
+              "properties": {
+                "metrics": [
+                  [ "AWS/EC2", "CPUUtilization", "InstanceId", "i-0123456789abcdef0", { "period": 300 } ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "us-east-1",
+                "stat": "Average"
+              }
+            }
+          ]
+        }

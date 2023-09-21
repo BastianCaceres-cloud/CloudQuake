@@ -1,0 +1,30 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Plantilla de AWS CloudFormation para Amazon SES
+
+Resources:
+  MySESPolicy:
+    Type: AWS::SES::ReceiptRuleSet
+    Properties:
+      RuleSetName: MySESPolicy
+
+  MySESSendRule:
+    Type: AWS::SES::ReceiptRule
+    Properties:
+      RuleSetName: !Ref MySESPolicy
+      Rule:
+        Name: MySESSendRule
+        Enabled: true
+        Recipients:
+          - myemail@example.com # ejemplo de correo electrónico
+        # Actions:
+        #   - S3Action:
+        #       BucketName: cf-templates-12o3kel6tih8q-us-east-1 #nombre del bucket S3
+
+Outputs:
+  MySESPolicy:
+    Description: Conjunto de reglas de recepción SES
+    Value: !Ref MySESPolicy
+
+  MySESSendRule:
+    Description: Regla de envío de correo electrónico SES
+    Value: !Ref MySESSendRule

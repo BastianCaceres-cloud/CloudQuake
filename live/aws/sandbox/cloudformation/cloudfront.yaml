@@ -5,13 +5,13 @@ Description: Plantilla de CloudFormation para crear un S3 Bucket y una distribuc
 Mappings:
   BucketNames:
     sandbox:
-      Name: "cfront-s3-pagopension-sandbox"
+      Name: "mfe-pagopension-sandbox"
     dev:
-      Name: "cfront-s3-pagopension-dev"
+      Name: "mfe-pagopension-dev"
     qa: 
-      Name: "cfront-s3-pagopension-qa"
+      Name: "mfe-pagopension-qa"
     prod:
-      Name: "cfront-s3-pagopension-prod"
+      Name: "mfe-pagopension-prod"
 
 
 Parameters:
@@ -30,10 +30,6 @@ Parameters:
     Description: La región donde se desplegarán los recursos
     Type: String
     Default: us-east-1
-
-  BucketName:
-    Description: El nombre del bucket s3 sera generado automaticamente seleccionando el entorno
-    Type: String
 
 
   BucketACL:

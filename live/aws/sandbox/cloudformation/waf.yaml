@@ -16,13 +16,13 @@ Parameters:
 Mappings:
   ACLNames:
     sandbox:
-      Name: "webacl-pagopension-sandbox"
+      Name: "webaclv2-pagopension-sandbox"
     dev:
-      Name: "webacl-pagopension-dev"
+      Name: "webaclv2-pagopension-dev"
     qa: 
-      Name: "webacl-pagopension-qa"
+      Name: "webaclv2-pagopension-qa"
     prod:
-      Name: "webacl-pagopension-prod"
+      Name: "webaclv2-pagopension-prod"
 
 Resources:
   IPSet:
