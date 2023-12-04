@@ -1,0 +1,1 @@
+En la linea 781 se debe configurar el nombre de la tabla de dynamodb y el aws access key que tenga permisos para dynamodb
