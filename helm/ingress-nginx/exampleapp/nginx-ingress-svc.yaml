@@ -1,0 +1,83 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    meta.helm.sh/release-name: ingress-nginx
+    meta.helm.sh/release-namespace: pagopension
+    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: tcp
+    service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
+    service.beta.kubernetes.io/aws-load-balancer-subnets: subnet-06ad01a8f2a40760a,subnet-0a8195b3ebc2d6984,subnet-013d49cd18467455d
+    service.beta.kubernetes.io/aws-load-balancer-type: internet-facing
+  labels:
+    app.kubernetes.io/component: controller
+    app.kubernetes.io/instance: ingress-nginx
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/part-of: ingress-nginx
+    app.kubernetes.io/version: 1.9.0
+    helm.sh/chart: ingress-nginx-4.8.0
+  name: ingress-nginx-controller
+  namespace: pagopension
+spec:
+  loadBalancerClass: service.k8s.aws/nlb
+  type: LoadBalancer
+
+apiVersion: v1
+# kind: Service
+# metadata:
+#   annotations:
+#     meta.helm.sh/release-name: ingress-nginx
+#     meta.helm.sh/release-namespace: pagopension
+#     service.beta.kubernetes.io/aws-load-balancer-backend-protocol: tcp
+#     service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+#     service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
+#     service.beta.kubernetes.io/aws-load-balancer-subnets: subnet-06ad01a8f2a40760a,subnet-0a8195b3ebc2d6984,subnet-013d49cd18467455d
+#     service.beta.kubernetes.io/aws-load-balancer-type: internet-facing
+#   creationTimestamp: "2023-10-02T14:47:13Z"
+#   finalizers:
+#   - service.k8s.aws/resources
+#   labels:
+#     app.kubernetes.io/component: controller
+#     app.kubernetes.io/instance: ingress-nginx
+#     app.kubernetes.io/managed-by: Helm
+#     app.kubernetes.io/name: ingress-nginx
+#     app.kubernetes.io/part-of: ingress-nginx
+#     app.kubernetes.io/version: 1.9.0
+#     helm.sh/chart: ingress-nginx-4.8.0
+#   name: ingress-nginx-controller-internal
+#   namespace: pagopension
+#   resourceVersion: "9140571"
+#   uid: 91ff16c5-df73-4ab3-a69f-157a258b8062
+# spec:
+#   allocateLoadBalancerNodePorts: true
+#   clusterIP: 172.20.106.73
+#   clusterIPs:
+#   - 172.20.106.73
+#   externalTrafficPolicy: Cluster
+#   internalTrafficPolicy: Cluster
+#   ipFamilies:
+#   - IPv4
+#   ipFamilyPolicy: SingleStack
+#   loadBalancerClass: service.k8s.aws/nlb
+#   ports:
+#   - name: http
+#     nodePort: 32559
+#     port: 80
+#     protocol: TCP
+#     targetPort: 8080
+#   - name: https
+#     nodePort: 31186
+#     port: 443
+#     protocol: TCP
+#     targetPort: 8443
+#   selector:
+#     app.kubernetes.io/component: controller
+#     app.kubernetes.io/instance: ingress-nginx
+#     app.kubernetes.io/name: ingress-nginx
+#   sessionAffinity: None
+#   type: LoadBalancer
+# status:
+#   loadBalancer:
+#     ingress:
+#     - hostname: k8s-pagopens-ingressn-68d144ed04-a047a16cdd8902e2.elb.us-east-1.amazonaws.com

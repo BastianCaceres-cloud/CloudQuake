@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: net-debug-pod
+  namespace: pagopension
+spec:
+  containers:
+  - name: netshoot
+    image: nicolaka/netshoot
+    command:
+    - sleep
+    - "3600"

@@ -1,0 +1,56 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-internal-pagopension
+  namespace: pagopension
+spec:
+  ingressClassName: nginx-internal-pagopension
+  rules:
+    - http:
+        paths:
+          - pathType: Prefix
+            path: /detalleciclopagonegback
+            backend:
+              service:
+                name: detalleciclopagonegback-svc
+                port:
+                  number: 80
+    - http:
+        paths:
+          - pathType: Prefix
+            path: /pensionloginutilback
+            backend:
+              service:
+                name: pensionloginutilback-svc
+                port:
+                  number: 80
+
+    - http:
+        paths:
+          - pathType: Prefix
+            path: /pensionretencionclientesback
+            backend:
+              service:
+                name: pensiongestionrolesutilback-svc
+                port:
+                  number: 80
+
+    - http:
+        paths:
+          - pathType: Prefix
+            path: /pensiongestionrolesutilback
+            backend:
+              service:
+                name: pensiongestionrolesutilback-svc
+                port:
+                  number: 80
+
+    - http:
+        paths:
+          - pathType: Prefix
+            path: /pensionparametrosutilback
+            backend:
+              service:
+                name: pensionparametrosutilback-svc
+                port:
+                  number: 80
